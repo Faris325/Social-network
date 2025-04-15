@@ -1,0 +1,13 @@
+main{
+    display: flex;
+    height: 70vh;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.image_profile{
+    width: 300px;
+    height: auto;
+}
+

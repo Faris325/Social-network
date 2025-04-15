@@ -1,0 +1,16 @@
+.profile_setup_image{
+    width: 40px;
+    height: auto;
+}
+
+button {
+    border: none;
+    background: none;
+    padding: 0;
+  }
+
+
+.form-select {
+    width: 150px; /* Уменьши по необходимости */
+}
+
