@@ -18,11 +18,19 @@
                     {% endif %}
                     <div class="card-body">
                         <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+                        <div class = 'friend_add'>
+                            <form action="friends:friends" method = 'post'>
+                                <button>
+                                    <input type="hidden" name = 'receiver' value = {{user.id}}>
+                                    <img class = 'image_friend_add' src="{% static "image/friend_add.png" %}" alt="нет фото">
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             </div>
         {% empty %}
-            <p>Пользователей пока нет.</p>
+            <p>Других пользователей пока нет.</p>
         {% endfor %}
     </div>
     {% if is_paginated == True %}

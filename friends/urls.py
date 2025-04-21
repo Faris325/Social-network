@@ -18,34 +18,12 @@ from atexit import register
 from django.contrib import admin
 from django.urls import path
 from users import views
-from django.urls import include
+from friends import views
 
-app_name = 'users'
+app_name = 'friends'
 
 urlpatterns = [
-    path('', views.UserLoginView.as_view(), 
-         name='login'
+    path('friends/', views.AddFriend.as_view(), 
+         name='friends'
          ),
-    path('register/', views.UserRegistrationView.as_view(), 
-         name = 'register'
-         ),
-    path('profile/', views.UserProfileView.as_view(), 
-         name = 'profile'
-         ),
-    path('profile/password/', views.UserChangePassword.as_view(), 
-         name='password'
-         ),
-    path('profile/change', views.UserChangeData.as_view(), 
-         name = 'change'
-         ),
-    path('logout/', views.UserLogoutView.as_view(), 
-         name = 'logout'
-         ),  
-    path('profile/friends', views.UserFriends.as_view(), 
-         name = 'search_friends'
-         ),
-
-     path('profile/', include('friends.urls',))  
-]
-
-
+    ]   

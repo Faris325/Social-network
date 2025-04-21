@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
 
     'users',
+    'friends',
 ]
 
 MIDDLEWARE = [
@@ -83,8 +84,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME':'sh',
-        'USER':'sh',
-        'PASSWORD':'sh',
+        'USER':'postgres',
+        'PASSWORD':'1234',
         'HOST':'localhost',
         'PORT':'5432',
                    

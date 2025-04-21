@@ -30,7 +30,6 @@ from users.forms import ProfileChangeForm
 from users.models import User
 
 
-
 class UserLoginView(FormView):
 
     """Контроллер для формы авторизации"""
@@ -163,6 +162,7 @@ class UserChangeData(LoginRequiredMixin, UpdateView):
 
 
         return super().form_valid(form)
+
 
 class UserFriends(LoginRequiredMixin, ListView):
 
