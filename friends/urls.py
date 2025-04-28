@@ -17,13 +17,25 @@ Including another URLconf
 from atexit import register
 from django.contrib import admin
 from django.urls import path
-from users import views
 from friends import views
 
 app_name = 'friends'
 
 urlpatterns = [
-    path('friends/', views.AddFriend.as_view(), 
+    path('add-friends/', views.AddFriend.as_view(), 
+         name='add-friend'
+         ),
+    path('profile/friends/', views.FriendsList.as_view(), 
          name='friends'
          ),
-    ]   
+    path('profile/friends/accept',views.FriendAccept.as_view(),
+         name = 'friend-accept'),
+    path('profile/friends/cancellation',views.FriendCancellation.as_view(),
+         name = 'friend-cancellation'),
+    path('profile/friends/reject',views.FriendReject.as_view(),
+         name = 'friend-reject'),
+    path('profile/friends/delete',views.FriendDelete.as_view(),
+         name = 'friend-delete'),          
+    ]
+    
+    

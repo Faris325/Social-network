@@ -1,5 +1,5 @@
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm,PasswordChangeForm
 from django import forms 
 
 
@@ -37,7 +37,7 @@ class UserRegisterForm(UserCreationForm):
         model = User
         fields = [
             'first_name', 'last_name', 
-            'phone_number',
+            'phone_number','email'
 
             ]  
         error_messages = {
@@ -79,7 +79,6 @@ class ProfileChangeForm(forms.ModelForm):
        в модели при вызове save().
 
     """
-    
     last_name = forms.CharField(max_length=150, required=False)
     first_name = forms.CharField(max_length=150, required=False)
     phone_number = forms.CharField(max_length=15, required=False)

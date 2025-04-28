@@ -11,6 +11,8 @@
 """
 
 from multiprocessing import AuthenticationError
+from urllib import request
+from django.dispatch import receiver
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -23,11 +25,13 @@ from django.views.generic import FormView
 from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Q
 
 from users.forms import UserLoginForm
 from users.forms import UserRegisterForm
 from users.forms import ProfileChangeForm
 from users.models import User
+from friends.models import Friends
 
 
 class UserLoginView(FormView):
@@ -155,7 +159,12 @@ class UserChangeData(LoginRequiredMixin, UpdateView):
         return self.request.user
     
     def form_valid(self, form):
-        
+        """ Удаление фотографии пользователя
+
+            image - это объект, у него есть метод delete, который при вызове
+            удаляет изображение из хранилища, а в базе данных остается пустое 
+            значение.
+        """
         if self.request.POST.get('DeleteImage'):
             profile = form.instance
             profile.image.delete()
@@ -175,6 +184,9 @@ class UserFriends(LoginRequiredMixin, ListView):
        
        Методы 
        get_queryset - Возвращает всех пользователей, кроме текущего.
+       get_context_data - добавляет допополнительное аргументы в кварисет,
+       такие как - пользователи, которых текущий пользователь добавил в друзья
+       и пользователи которым была отправлена заявка
 
     """
 
@@ -183,7 +195,50 @@ class UserFriends(LoginRequiredMixin, ListView):
     template_name = 'users.html'
     paginate_by = 10
 
-    
+    def get_context_data(self,*, object_list = None, **kwargs):
+        """ Добавление дополнительных аргументов в кварисет по добавлению в 
+            друзья
+
+           Создается 2 списка, которые будут переданы в кварисет. 
+           sent_friends - пользователи, которым была отправлена заявка в друзья
+           add_friends - пользователи, которым была отправлена заявка в друзья
+
+           В начале перебираются все пользователи, кроме текущего, если
+           пользователю была отправлена заявка, кварисет sent_friends_query
+           возвращет запись, если пользователю была отправлена заявка и он 
+           добавляется в список sent_friends?, тоже самое и с пользователями 
+           которые были добавлены в друзья текущим пользователем.
+
+           метод() .exsits возвращает Ture если кварисет не пустой
+           !!!!!!!!!!!!!! исправить( много sql запросов 1+1)!!!!!!!!!!!!!!!!!! 
+        """
+        sent_friends = []
+        add_friends = []
+        
+        friends = self.get_queryset()
+        for user in friends:
+
+            sent_friends_query = Friends.objects.filter(
+                sender=self.request.user, receiver=user, 
+                application_status = 'pending')
+            add_friends_query = Friends.objects.filter(
+                Q(sender=self.request.user, receiver = user, 
+                    application_status = 'accepted'
+                    )
+                |Q(sender=user, receiver=self.request.user, 
+                    application_status = 'accepted'
+                    ))
+            
+            if sent_friends_query.exists():
+                sent_friends.append(user)
+            elif add_friends_query.exists():
+                add_friends.append(user)
+
+        kwargs['sent_friends'] = sent_friends
+        kwargs['add_friends'] = add_friends
+
+        return super().get_context_data(**kwargs)
+     
     def get_queryset(self):
         return User.objects.exclude(id=self.request.user.id)
         

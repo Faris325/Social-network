@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/friends.css' %}">
+{% endblock css %}
+
+{% block content %}
+<body>
+    <div class="container py-4">
+        <h1 class="mb-4">Мои друзья</h1>
+        
+        <!-- Вкладки для переключения между друзьями и заявками -->
+        <ul class="nav nav-tabs mb-4" id="friendsTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="friends-tab" data-bs-toggle="tab" data-bs-target="#friends" type="button" role="tab">Друзья</button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests" type="button" role="tab">Заявки</button>
+            </li>
+        </ul>
+        
+        <!-- Содержимое вкладок -->
+        <div class="tab-content" id="friendsTabsContent">
+            <!-- Вкладка друзей -->
+            <div class="tab-pane fade show active" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+                <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+                    {% for friend in friends %}
+                    <div id="friend-{{ friend.id }}" class="col">
+                        <div class="card h-100 shadow-sm border-0 rounded-4 overflow-hidden">
+                            <div class="ratio ratio-4x3">
+                                {% if friend.image %}
+                                    <img src="{{ friend.image.url }}" class="object-fit-cover w-100 h-100 rounded-top-4" alt="Аватар друга">
+                                {% else %}
+                                    <img src="{% static 'image/profile_image/profile.webp' %}" class="object-fit-cover w-100 h-100 rounded-top-4" alt="Аватар друга">
+                                {% endif %}
+                            </div>
+                            <div class="card-body text-center">
+                                <h5 class="card-title mb-1">{{ friend.first_name }} {{ friend.last_name }}</h5>
+                                <p class="text-muted small">Последний онлайн: ? часа назад</p>
+                            </div>
+                            <div class="card-footer bg-white border-0 d-flex justify-content-between px-3 pb-3">
+                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3">Написать</button>
+                                <button class="btn btn-outline-danger btn-sm rounded-pill px-3 delete-friend" data-id="{{ friend.id }}">Удалить</button>
+                            </div>
+                        </div>
+                    </div>
+                    {% empty %}
+                        <p>У вас пока нет друзей</p>
+                    {% endfor %}
+                </div>
+            </div>
+            
+            <!-- Вкладка заявок -->
+            <div class="tab-pane fade" id="requests" role="tabpanel" aria-labelledby="requests-tab">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h4 class="mb-3">Входящие заявки</h4>
+                        <div class="list-group">
+                            {% for incoming in incomings %}
+                            <div id="sender-{{ sender.sender.id }}"class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if incoming.sender.image %}
+                                        <img src="{{ incoming.sender.image.url }}" class="rounded-circle me-2" alt="Аватар">
+                                    {% else %}
+                                        <img src="{% static 'image/profile_image/profile.webp' %}" class="rounded-circle me-2" alt="Аватар">
+                                    {% endif %}
+                                    <strong>{{ incoming.sender.first_name }} {{ incoming.sender.last_name }}</strong>
+                                </div>
+                                <div class="d-flex">
+                                    <button class="btn btn-success btn-sm me-1">Принять</button>
+                                    <button class="btn btn-danger btn-sm sender delete-sender" data-sender-id="{{ incoming.sender.id }}">Отклонить</button>
+                                </div>
+                            </div>
+                            {% empty %}
+                            <p>Нет входящих заявок</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    <div class="col-md-6 mt-3 mt-md-0">
+                        <h4 class="mb-3">Исходящие заявки</h4>
+                        <div class="list-group">
+                            {% for outgoing in outgoings %}
+                            <div id="user-{{ outgoing.receiver.id }}"  class="list-group-item d-flex justify-content-between align-items-center">
+                                <div>
+                                    {% if outgoing.receiver.image %}
+                                        <img src="{{ outgoing.receiver.image.url }}" class="rounded-circle me-2" alt="Аватар">
+                                    {% else %}
+                                        <img src="{% static 'image/profile_image/profile.webp' %}" class="rounded-circle me-2" alt="Аватар">
+                                    {% endif %}
+                                    <strong>{{ outgoing.receiver.first_name }} {{ outgoing.receiver.last_name }}</strong>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <span class="badge bg-warning text-dark me-2">{{ outgoing.get_application_status_display }}</span>
+                                    <button class="btn btn-outline-secondary btn-sm" data-receiver-id="{{ outgoing.receiver.id }}">Отменить</button>
+                                </div>
+                            </div>
+                            {% empty %}
+                             <p>Нет исходящих заявок</p>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock content %}
+
+{% block js %}
+<script>
+    // Получаем CSRF токен
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    
+    // Скрипт для удаления друга
+    document.querySelectorAll('.delete-friend').forEach(button => {
+        button.addEventListener('click', function() {
+            const friendId = this.dataset.id;
+
+            fetch('{% url "friends:friend-delete" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ friend_id: friendId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject('Ошибка при удалении друга');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById(`friend-${friendId}`).classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById(`friend-${friendId}`).remove();
+                }, 300); // 300 мс для анимации
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        });
+    });
+
+    // Скрипт для отмены исходящей заявки
+    document.querySelectorAll('.btn.btn-outline-secondary.btn-sm').forEach(button => {
+        button.addEventListener('click', function() {
+            const userId = this.dataset.receiverId;
+
+            fetch('{% url "friends:friend-cancellation" %}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ user_id: userId })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return Promise.reject('Ошибка при отмене заявки');
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.getElementById(`user-${userId}`).classList.add('fade-out');
+                setTimeout(() => {
+                    document.getElementById(`user-${userId}`).remove();
+                }, 300); // 300 мс для анимации
+            })
+            .catch(error => {
+                console.error(error);
+            });
+        });
+    });
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock js %}

@@ -45,7 +45,7 @@ urlpatterns = [
          name = 'search_friends'
          ),
 
-     path('profile/', include('friends.urls',))  
+
 ]
 
 

@@ -3,6 +3,7 @@ from django.db import models
 from users.models import User
 
 class Friends(models.Model):
+    
     STATUS_CHOISES = [
         ('pending','Отправлено'),
         ('accepted','Принято'),
