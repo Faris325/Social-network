@@ -28,19 +28,26 @@ class AddFriend(View):
             заявку, принимающим, а так же статус запроса, в данном случае это 
             будет pending (ожидающий)
         """
+        data = json.loads(request.body)
         sender = request.user
-        receiver = User.objects.get(id = int(request.POST.get('receiver')))
-        if not Friends.objects.filter(sender = sender, receiver=receiver, application_status = 'pending'): # чтобы не повторять заявку
+        
+        receiver = User.objects.get(id = data['receiver'])
+        if not Friends.objects.filter(
+            sender = sender, receiver=receiver, 
+            application_status = 'pending'
+            ): # чтобы не повторять заявку
+
             Friends.objects.create(
                 sender=sender, receiver=receiver, 
                 application_status = 'pending'
                 )
+            
             Notifications.objects.create(type = 'pending', user=receiver,)
         else:
-            return HttpResponseRedirect(reverse('users:search_friends'))
+            return JsonResponse({'status': 'ok'})
             
 
-        return HttpResponseRedirect(reverse('users:search_friends'))
+        return JsonResponse({'status': 'ok'})
 
 
 class FriendsList(ListView):
@@ -107,8 +114,10 @@ class FriendAccept(View):
                Если был отправлены запросу друг другу, то как кто то примет, 
                заявки входящие удалятся у 2 
             """
+            data = json.loads(request.body)
+
             receiver = request.user
-            sender = User.objects.get(id = int(request.POST.get('sender')))
+            sender = User.objects.get(id = data['user_id'])
 
             Friends.objects.create(
                 sender = sender, receiver = receiver, 
@@ -121,7 +130,7 @@ class FriendAccept(View):
                 Q(sender=receiver, receiver = sender, 
                 application_status = 'pending')).delete()
          
-            return HttpResponseRedirect(reverse('friends:friends'))
+            return JsonResponse({'status': 'ok'})
 
 class FriendCancellation(View):
 

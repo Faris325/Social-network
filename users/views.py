@@ -26,6 +26,8 @@ from django.contrib.auth.views import LogoutView
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
+from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchQuery
 
 from users.forms import UserLoginForm
 from users.forms import UserRegisterForm
@@ -196,42 +198,43 @@ class UserFriends(LoginRequiredMixin, ListView):
     paginate_by = 10
 
     def get_context_data(self,*, object_list = None, **kwargs):
-        """ Добавление дополнительных аргументов в кварисет по добавлению в 
-            друзья
+        """ Добавление дополнительных аргументов для контекста 
 
-           Создается 2 списка, которые будут переданы в кварисет. 
+           Создается 2 списка, которые будут переданы в шаблон. 
            sent_friends - пользователи, которым была отправлена заявка в друзья
-           add_friends - пользователи, которым была отправлена заявка в друзья
+           add_friends - пользователи, которые в друзьях
 
-           В начале перебираются все пользователи, кроме текущего, если
-           пользователю была отправлена заявка, кварисет sent_friends_query
-           возвращет запись, если пользователю была отправлена заявка и он 
-           добавляется в список sent_friends?, тоже самое и с пользователями 
-           которые были добавлены в друзья текущим пользователем.
+           Создаются 2 кварисета
+           sent_friends_query - кварисет пользователей, которым была отправлена
+           заявка и она в статусе pending
+           friends_query - кварисет друзей пользователя 
 
-           метод() .exsits возвращает Ture если кварисет не пустой
-           !!!!!!!!!!!!!! исправить( много sql запросов 1+1)!!!!!!!!!!!!!!!!!! 
+           Перебираются все пользователи, кроме текущего, если полльзователь
+           есть в кварисете sent_friends_query, то объект добавляется в список
+           sent_friends, если пользователь находится в кварисете friends_query
+           то он добавится в список  add_friends.
+
+           Эти списки будут использованы в шаблоне следующим образом: 
+           Например если выводимый пользователь есть в списке sent_freiends, то
+           будет надпись "отпарвлена заявка" 
         """
         sent_friends = []
         add_friends = []
-        
-        friends = self.get_queryset()
-        for user in friends:
 
-            sent_friends_query = Friends.objects.filter(
-                sender=self.request.user, receiver=user, 
-                application_status = 'pending')
-            add_friends_query = Friends.objects.filter(
-                Q(sender=self.request.user, receiver = user, 
-                    application_status = 'accepted'
-                    )
-                |Q(sender=user, receiver=self.request.user, 
-                    application_status = 'accepted'
-                    ))
-            
-            if sent_friends_query.exists():
+        sent_friends_query = list(Friends.objects.filter(
+            sender=self.request.user, application_status = 'pending'
+            ))
+        
+        friends_query = list(Friends.objects.filter(
+            Q(sender=self.request.user, application_status = 'accepted')
+            |Q(receiver=self.request.user, application_status = 'accepted'))
+            )
+        
+        friends = self.object_list
+        for user in friends:
+            if user in sent_friends_query:
                 sent_friends.append(user)
-            elif add_friends_query.exists():
+            elif user in friends_query:
                 add_friends.append(user)
 
         kwargs['sent_friends'] = sent_friends
@@ -240,6 +243,30 @@ class UserFriends(LoginRequiredMixin, ListView):
         return super().get_context_data(**kwargs)
      
     def get_queryset(self):
+        """ Метод для получениия кварисета пользователей 
+
+            Если пользователь использоваль использовал поиск, то отправлет get 
+            параметр  q , в котором значение для поиска, если оно есть, то
+            будет произведен поолнтекстовый поиск с помощь SearchVector, а если 
+            по пользователь ввел например часть имени будет произведен поиск 
+            с помощью фильтра __icontains, который по имени и фамилии ищет 
+            входит ли не полностью введеноое имя в какое то поле объекта.
+        """
+        q = self.request.GET.get('q')
+
+        if q: 
+            q = q.strip()
+
+            search_query = User.objects.annotate(
+                search = SearchVector("first_name", "last_name")).filter(Q(
+                    search=SearchQuery(q))|
+                    Q(first_name__icontains = q)|
+                    Q(last_name__icontains = q)
+                    ).exclude(id=self.request.user.id)
+                    
+
+            return search_query
+
         return User.objects.exclude(id=self.request.user.id)
         
         
