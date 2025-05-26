@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     "debug_toolbar",
+    'channels',
 
     'users',
     'friends',
@@ -149,6 +150,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-AUTH_USER_MODEL = 'users.User'
+AUTH_USER_MODEL = 'users.User' # Используется кастомная модель User
 
 LOGIN_URL = 'users:login'  # перенаправляение неавторизованных пользователей 
+
+ASGI_APPLICATION = "sh.asgi.application"  # файл, который обрабатывает WebSocket 
