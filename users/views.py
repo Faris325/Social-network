@@ -10,8 +10,6 @@
 
 """
 
-from multiprocessing import AuthenticationError
-from urllib import request
 from django.dispatch import receiver
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
@@ -61,7 +59,7 @@ class UserLoginView(FormView):
             указывает next
          4. Метод .add_error добавляет к форме ошибку, если указать None, 
          значит что не относится к конретному полю, а получить 
-         эту ошибку можно будет с помощью form.non_field_errors.  
+         эту ошибку можно будет с помощью form.non_field_errors.
 
         """
         phone_number = form.cleaned_data['phone_number']
@@ -89,7 +87,7 @@ class UserRegistrationView(CreateView):
     template_name = 'registration.html'
     form_class = UserRegisterForm
     success_url = reverse_lazy('users:profile')
-   
+  
     def form_valid(self, form):
         """Регистрирует клиента и перенаправляет на профиль
 
@@ -100,7 +98,7 @@ class UserRegistrationView(CreateView):
         user = form.save()
         auth.login(self.request, user)
 
-        return HttpResponseRedirect(self.success_url) 
+        return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -270,5 +268,4 @@ class UserFriends(LoginRequiredMixin, ListView):
         return User.objects.exclude(id=self.request.user.id)
         
         
-
 

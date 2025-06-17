@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
 <body class="bg-light">
   <div class="container py-4">
 
@@ -13,13 +14,7 @@
             <textarea name="text" class="form-control" rows="3" placeholder="О чём вы думаете?"></textarea>
           </div>
           <div class="mb-3">
-            <input type="file" name="image" class="form-control mb-2" accept="image/*" id="imageInput" style="display:none;">
-            <input type="file" name="video" class="form-control mb-2" accept="video/*" id="videoInput" style="display:none;">
-            <select id="fileTypeSelector">
-              <option value="image">Изображение</option>
-              <option value="video">Видео</option>
-            </select>
-          </div>
+            <input type="file" name="media" accept="image/*,video/*" class="form-control mb-2" id="mediaInput">
           <button type="submit" class="btn btn-dark">Опубликовать</button>
         </form>
       </div>
@@ -36,78 +31,21 @@
     
         <div class="mb-2">{{ publication.text }}</div>
     
-        {% if publication.image %}
-        <img src="{{ publication.image.url }}" alt="Фото" class="img-fluid rounded">
-        {% elif publication.video %}
-        <video controls class="img-fluid rounded">
-          <source src="{{ publication.video.url }}" type="video/mp4">
-          Ваш браузер не поддерживает воспроизведение видео.
-        </video>
-        {% endif %}
+    {% if publication.media %}
+      {% if publication.media.name|lower|slice:"-4:" == ".mp4" or publication.media.name|lower|slice:"-4:" == ".avi" %}
+          <video controls class="img-fluid rounded">
+              <source src="{{ publication.media.url }}" type="video/mp4">
+              Ваш браузер не поддерживает воспроизведение видео.
+          </video>
+      {% else %}
+          <img src="{{ publication.media.url }}" alt="Media" class="img-fluid rounded">
+      {% endif %}
+    {% endif %}
       </div>
     </div>
     {% endfor %}
  
   </div>
-  <script>
-    const selector = document.getElementById('fileTypeSelector');
-    const imageInput = document.getElementById('imageInput');
-    const videoInput = document.getElementById('videoInput');
-  
-    // Показать поле image по умолчанию
-    window.addEventListener('DOMContentLoaded', () => {
-      selector.value = 'image'; // установим выбранный вариант
-      imageInput.style.display = 'block';
-      videoInput.style.display = 'none';
-    });
-  
-    // Обработчик при изменении выбора
-    selector.addEventListener('change', () => {
-      if (selector.value === 'image') {
-        imageInput.style.display = 'block';
-        videoInput.style.display = 'none';
-      } else if (selector.value === 'video') {
-        videoInput.style.display = 'block';
-        imageInput.style.display = 'none';
-      } else {
-        imageInput.style.display = 'none';
-        videoInput.style.display = 'none';
-      }
-    });
-      // Получаем CSRF токен
-      const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
-  
-      // Скрипт для удаления друга
-      document.querySelectorAll('.delete-publication').forEach(button => {
-          button.addEventListener('click', function() {
-              const PublicationId = this.dataset.id;
-  
-              fetch('{% url "publications:publication-delete" %}', {
-                  method: 'POST',
-                  headers: {
-                      'X-CSRFToken': csrftoken,
-                      'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ publication_id: PublicationId })
-              })
-              .then(response => {
-                  if (!response.ok) {
-                      return Promise.reject('Ошибка при удалении публикации');
-                  }
-                  return response.json();
-              })
-              .then(data => {
-                  document.getElementById(`publication-${PublicationId}`).classList.add('fade-out');
-                  setTimeout(() => {
-                      document.getElementById(`publication-${PublicationId}`).remove();
-                  }, 300); // 300 мс для анимации
-              })
-              .catch(error => {
-                  console.error(error);
-              });
-          });
-      })
-  </script>
 </body>
 {% endblock content %}
 </html>

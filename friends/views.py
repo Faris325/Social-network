@@ -1,20 +1,16 @@
 import json
 
-from email.mime import application
-from django.dispatch import receiver
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.urls import reverse
-from notifications.models import Notifications
 from django.views import View
 from django.views.generic import ListView
 from django.db.models import Q
 from django.http import JsonResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 
+from notifications.models import Notifications
 from users.models import User
 from friends.models import Friends
 
-class AddFriend(View):
+class AddFriend(LoginRequiredMixin, View):
 
     """Контроллер для отправки запроса в друзья 
     """
@@ -30,15 +26,15 @@ class AddFriend(View):
         """
         data = json.loads(request.body)
         sender = request.user
-        
+         
         receiver = User.objects.get(id = data['receiver'])
         if not Friends.objects.filter(
-            sender = sender, receiver=receiver, 
+            sender = sender, receiver=receiver,
             application_status = 'pending'
             ): # чтобы не повторять заявку
 
             Friends.objects.create(
-                sender=sender, receiver=receiver, 
+                sender=sender, receiver=receiver,
                 application_status = 'pending'
                 )
             
@@ -50,7 +46,7 @@ class AddFriend(View):
         return JsonResponse({'status': 'ok'})
 
 
-class FriendsList(ListView):
+class FriendsList(LoginRequiredMixin, ListView):
 
     """
     Контроллер для вывода друзей пользователя, входящих и исходящих запросов 
@@ -104,7 +100,7 @@ class FriendsList(ListView):
         return super().get_context_data(**kwargs)
     
 
-class FriendAccept(View):
+class FriendAccept(LoginRequiredMixin, View):
         
         """Контроллер для принятия заявки в друзья
         """
@@ -132,7 +128,7 @@ class FriendAccept(View):
          
             return JsonResponse({'status': 'ok'})
 
-class FriendCancellation(View):
+class FriendCancellation(LoginRequiredMixin, View):
 
     """Контроллр для отмены исходящей заявки в друзья  
     """
@@ -151,7 +147,7 @@ class FriendCancellation(View):
         
         return JsonResponse({'status': 'ok'})
             
-class FriendReject(View):
+class FriendReject(LoginRequiredMixin, View):
 
     """Контроллр для отмены входящей заявки в друзья
     """
@@ -172,7 +168,7 @@ class FriendReject(View):
         return JsonResponse({'status': 'ok'})
 
 
-class FriendDelete(View):
+class FriendDelete(LoginRequiredMixin,View):
 
     """Контроллер для удаления друга
     """

@@ -40,7 +40,10 @@
                                 <p class="text-muted small">Последний онлайн: ? часа назад</p>
                             </div>
                             <div class="card-footer bg-white border-0 d-flex justify-content-between px-3 pb-3">
-                                <button class="btn btn-outline-primary btn-sm rounded-pill px-3">Написать</button>
+                                <form action="{% url 'user_messages:messages' friend.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn btn-outline-primary btn-sm rounded-pill px-3">Написать</button>
+                                </form>
                                 <button class="btn btn-outline-danger btn-sm rounded-pill px-3 delete-friend" data-id="{{ friend.id }}">Удалить</button>
                             </div>
                         </div>

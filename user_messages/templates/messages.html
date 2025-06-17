@@ -1,0 +1,103 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block css %}
+  <link rel="stylesheet" href="{% static 'css/messages.css' %}">
+  <link rel="stylesheet" href="{% static 'css/message_item.css' %}">
+{% endblock css %}
+
+{% block content %}
+<div class="app-container" role="main">
+
+  <!-- Список диалогов -->
+  <aside class="dialogs-list" aria-label="Список диалогов">
+    <h2>Диалоги</h2>
+    {% for u in users %}
+      <a href="{% url "user_messages:messages" u.id %}" class="dialog-link">  
+        <div class="dialog-item {% if u == dialog_user %}custom-gray-bg{% endif %}">
+          {% if u == user %}
+            <div class="dialog-avatar">⭐</div>
+            <div class="dialog-username">Избранное</div>
+          {% else %}
+            <div class="dialog-avatar">
+              {% if u.image %}
+                <img src="{{ u.image.url }}" alt="фото" class="message-avatar-img">
+              {% else %}
+                <img src="{% static 'image/profile_image/profile.webp' %}" alt="фото" class="message-avatar-img">
+              {% endif %}
+            </div>
+            <div class="dialog-username">{{ u.first_name }} {{ u.last_name }}</div>
+          {% endif %}
+        </div>
+      </a>
+    {% endfor %}
+  </aside>
+
+  <!-- Панель чата -->
+  {% if chat_user %}
+    {% include "includes/message_item.html" %}
+  {% else %}
+    <section class="chat-panel" aria-label="Диалог с пользователем">
+      <div class="chat-header">Выберите диалог</div>
+    </section>
+  {% endif %}
+
+<!-- Скрипты -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    const otherUserId = {{ dialog_user.id }};  // id собеседника
+    const currentUserId = {{ user.id }}; // id текущего пользователя 
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws"; // Выбор ws или wss в зависимости от http или https 
+
+    const chatSocket = new WebSocket(
+      wsScheme + "://" + window.location.host + `/ws/chat/${otherUserId}/` // открытие веб- скоет соединения
+    );
+
+    chatSocket.onmessage = function(e) { // сервер присылает всем участникам комнаты это сообщение 
+      const data = JSON.parse(e.data); // json-строка, которую прислал сервер, преобразование ее в json-объект 
+      const message = data.message; // Создание переменноой с сообщением которое отправил пользователь
+      const senderId = data.sender_id; // id пользователя который отправил сообщение 
+
+      const chatLog = document.getElementById("chatMessages"); // находит элемент на странице с id = "chatMessages" и сохраняет в переменную(div контейнер в include)
+
+      const msgElement = document.createElement("div"); // Создает элемент div и сохраняет его в переменноой
+      msgElement.classList.add("message-item"); // к элементу div добавляется класс message-item 
+      if (senderId === currentUserId) {   // Если sender id совпадает с currentId(то есть сообщение отправил текущий пользователь), то к элементу добавляется класс sent) 
+        msgElement.classList.add("sent"); 
+      } else {
+        msgElement.classList.add("received"); // Если это сообщение от другого пользователя, добавляется класс "received"
+      }
+
+      msgElement.innerHTML = `  
+        <div class="message-content">
+          <p>${message}</p>
+          <span class="timestamp">${new Date().toLocaleString()}</span>  
+        </div>
+      `;                                                                // Кладет в новый блок div содержимое 
+
+      chatLog.appendChild(msgElement); // добавит внутрь chatlog новый элемент, котоырый был создан выше
+      chatLog.scrollTop = chatLog.scrollHeight; // прокручивает список сообщений вниз
+    };
+
+    document.getElementById("chat-message-form").onsubmit = function(e) {   // Код срабатывает в момент отправки формы 
+      e.preventDefault(); // отменяет перезагрузку странци при отправке формы 
+      const input = document.getElementById("chat-message-input");  // находит поле ввода сообщения 
+      const message = input.value.trim(); // Берёт текст из поля и убирает пробелы в начале и конце
+      if (!message) return; // Если сообщение пустое — ничего не отправляем и выходим из функции
+      chatSocket.send(JSON.stringify({ message })); // Отправляет сообщение через WebSocket серверу в формате JSON
+      input.value = ""// Очищает поле ввода после отправки сообщения
+    }; 
+  </script>
+
+<script>
+// Скрипт для прокуртки вниз после открытия дилаог
+
+
+const chatLog = document.getElementById("chatMessages");
+if (chatLog) {
+  chatLog.scrollTop = chatLog.scrollHeight;
+}
+
+
+</script>
+{% endblock content %}

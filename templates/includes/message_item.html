@@ -1,0 +1,33 @@
+{% load static %}
+<section class="chat-panel" aria-label="Диалог с пользователем">
+  <div class="chat-header">
+    {% if user != dialog_user %}
+      {{ dialog_user.first_name }} {{ dialog_user.last_name }}
+      {% if  dialog_user.image %}
+        <img src="{{dialog_user.image.url}}" alt="фото" class="message-avatar-img">
+      {% else %}
+        <img src="{% static 'image/profile_image/profile.webp' %}" alt="фото" class="message-avatar-img">
+    {% endif %}
+    {% else %}
+    Избранное
+    {% endif %}
+  </div>
+
+  <div class="chat-messages" id="chatMessages">
+    {% for personal_message in personal_messages %}
+      <div class="message-item {% if personal_message.sender == user %}sent{% else %}received{% endif %}">
+        <div class="message-content">
+          <p>{{ personal_message.content }}</p>
+          <span class="timestamp">{{ personal_message.timestamp|date:"d.m.Y H:i" }}</span>
+        </div>
+      </div>
+    {% empty %}
+      <div class="no-messages">Нет сообщений</div>
+    {% endfor %}
+  </div>
+
+  <form id="chat-message-form" class="chat-form">
+    <textarea id="chat-message-input" rows="2" placeholder="Введите сообщение..." required></textarea>
+    <button type="submit btn-dark">➤</button>
+  </form>
+</section>

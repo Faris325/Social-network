@@ -11,7 +11,7 @@ class UserRegisterForm(forms.ModelForm):
         model = Publications
         fields = [
             'user','text',
-            'image','video'    
+            'media',   
             ]
 
     

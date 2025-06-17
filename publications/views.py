@@ -5,12 +5,13 @@ from django.urls import reverse_lazy
 from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
 from friends.models import Friends
 
-class PublicationsView(CreateView):
+class PublicationsView(LoginRequiredMixin, CreateView):
 
     """Контроллер для отображения и создания публикаций
     """ 
@@ -73,7 +74,7 @@ class PublicationsView(CreateView):
         return context
     
 
-class PublicationDelete(View):
+class PublicationDelete(LoginRequiredMixin, View):
 
     """Контроллер для удаления публикации
     """

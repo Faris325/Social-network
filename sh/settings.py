@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
+    'daphne',
     'django.contrib.staticfiles',
     
     "debug_toolbar",
@@ -45,6 +46,7 @@ INSTALLED_APPS = [
     'friends',
     'notifications',
     'publications',
+    'user_messages',
 
 ]
 
@@ -79,7 +81,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'sh.wsgi.application'
-
+ASGI_APPLICATION = "sh.asgi.application"  # файл, который обрабатывает WebSocket 
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -150,8 +152,17 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+#InMemoryChannelLayer — это встроенный слой для разработки (не для продакшена). Он позволяет Channels работать без внешнего брокера, как Redis.
+
+#Теперь у тебя будет не None в self.channel_layer и ошибка NoneType пропадёт.
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    },
+}
+
 AUTH_USER_MODEL = 'users.User' # Используется кастомная модель User
 
 LOGIN_URL = 'users:login'  # перенаправляение неавторизованных пользователей 
 
-ASGI_APPLICATION = "sh.asgi.application"  # файл, который обрабатывает WebSocket 

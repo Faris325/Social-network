@@ -152,7 +152,7 @@
           </script>
           {% endif %}
           {% else %}
-          <a class="navbar-brand" href="{% url "users:profile" %}">Профиль</a>
+            <a class="navbar-brand" href="{% url "users:profile" %}">Профиль</a>
           {% endif %}
           <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
             <span class="navbar-toggler-icon"></span>
@@ -169,13 +169,7 @@
                 <a class="nav-link active" href="{% url "friends:friends" %}">Мои друзья</a>
               </li>
               <li class="nav-item">
-                <a class="nav-link active" href="#">Сообщения</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="#">
-                  <img src="{% static 'image/notification.png' %}" alt="Сообщения" style="width: 20px; height: 20px; margin-right: 8px;">
-                  Сообщения
-                </a>
+                <a class="nav-link active" href="{% url "user_messages:dialogs" %}">Сообщения</a>
               </li>
             </ul>
             <form action="{% url "users:logout" %}" method = 'post'>
