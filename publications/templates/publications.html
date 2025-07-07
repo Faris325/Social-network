@@ -6,8 +6,7 @@
 {% endblock css %}
 
 {% block content %}
-  <div class="container py-4">
-
+  <div class="container py-4" id="post-container">
       {% for publication in publications %}
       <div class="card mb-3 "id="publication-{{publication.id}}" data-publication-id="{{publication.id}}">
         <div class="card-body">
@@ -74,6 +73,28 @@
             });
         });
     });
+</script>
+<script>
+let page = 1;
+let loading = false;
+
+window.addEventListener("scroll", () => {
+    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !loading) {
+        loading = true;
+        page += 1;
+
+        fetch(`{% url 'publications:publication' %}?page=${page}`)
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById("post-container").insertAdjacentHTML("beforeend", data);
+                loading = false;
+            })
+            .catch(error => {
+                console.error("Ошибка при загрузке:", error);
+                loading = false;
+            });
+    }
+});
 </script>
 {% endblock content %}
 </html>

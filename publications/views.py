@@ -12,6 +12,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.core.paginator import Paginator
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
@@ -36,21 +37,13 @@ class PublicationsView(LoginRequiredMixin, CreateView):
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
-        """Метод контекста
+        """
+        Добавляет в контекст публикации пользователя и его друзей.
 
-           Дополнительно добавляет публикации друзей в контекст 
-
-           В начале получаем кварисет объектов Friends с текущим пользователей,
-           которая хранит с кем пользователь является в друзьях.
-           Создается пустой список, который будет хранить id друзей и id 
-           текущего пользователя(чтобы и его посты были видны в ленте).
-           Далее происходит перебор кварисета friends и в friends_id попадают 
-           id друзей текущего пользователя.
-           Далее получаем кварисет публикаций всех пользователей, создаем 
-           список публикаций друзей.
-           Перебираем кварисет публикаций, если публикацию делал друг
-           пользователя, добавляем ее в список публикаций. 
-           По итогу в шаблоне будут выведены публикации только друзей.
+        1. Получает список друзей текущего пользователя.
+        2. Формирует список ID друзей и самого пользователя.
+        3. Фильтрует публикации, оставляя только те, что принадлежат этим ID.
+        4. Добавляет их в контекст для отображения в шаблоне.
         """
         context = super().get_context_data(**kwargs)
 
@@ -76,7 +69,20 @@ class PublicationsView(LoginRequiredMixin, CreateView):
             if user_publication.user.id in friends_id:
                 friends_publications.append(user_publication)
 
-        context['publications'] = friends_publications
+        paginate_publications = Paginator(friends_publications, 6)
+        if self.request.GET.get('page'):
+            paginate_page = paginate_publications.page(self.request.GET.get('page'))
+            publication_list = []
+            for pub in paginate_page.object_list:
+                publication_list.append({'id': pub.id,
+                                         'text': pub.text,
+                                         'created_at': pub.created_at,
+                                         'user_id': pub.user_id,
+                                         'media': pub.media 
+                                         })
+            return JsonResponse({'publications': publication_list})
+        else:
+             context['publications'] = paginate_publications.page(1)
         return context
     
 

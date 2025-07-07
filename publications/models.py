@@ -11,3 +11,6 @@ class Publications(models.Model):
         upload_to = 'publications_media', blank=True, 
         null = True )
 
+    class Meta:
+        db_table = 'publications'
+
