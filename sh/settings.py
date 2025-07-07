@@ -59,6 +59,8 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
+    'users.middleware.update_last_seen_middleware',
+
     "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 

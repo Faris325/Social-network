@@ -87,3 +87,8 @@
 .chat-form button:hover {
   background-color: #3c5e88;
 }
+
+a {
+  color: #000;
+  text-decoration: none;
+}

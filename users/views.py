@@ -32,6 +32,7 @@ from users.forms import UserRegisterForm
 from users.forms import ProfileChangeForm
 from users.models import User
 from friends.models import Friends
+from publications.models import Publications
 
 
 class UserLoginView(FormView):
@@ -71,6 +72,12 @@ class UserLoginView(FormView):
             auth.login(self.request, user)
 
             next_url = self.request.GET.get('next')
+
+            user_region = self.request.POST.get('timezone')
+            if user_region:
+                user.time_zone = user_region
+                user.save()
+
             if next_url:
                 HttpResponseRedirect(next)
 
@@ -98,6 +105,11 @@ class UserRegistrationView(CreateView):
         user = form.save()
         auth.login(self.request, user)
 
+        user_region = self.request.POST.get('timezone')
+        if user_region:
+            user.time_zone = user_region
+            user.save()
+
         return HttpResponseRedirect(self.success_url)
 
     def get_context_data(self, **kwargs):
@@ -111,13 +123,16 @@ class UserProfileView(LoginRequiredMixin, View):
     """Контроллер для отображения профиля""" 
 
     def get(self, request):
-        context = {
-            'title': 'Профиль'
-            }
+        publications = Publications.objects.filter(user = request.user)
         
+        context = {
+            'title': 'Профиль',
+            'publications': publications,
+            'my_user': True
+            }
         return render(request, 'profile.html', context)
-    
-    
+
+     
 class UserLogoutView(LoginRequiredMixin, LogoutView):
     
     """Контроллер для выхода пользователя из системы
@@ -173,7 +188,7 @@ class UserChangeData(LoginRequiredMixin, UpdateView):
         return super().form_valid(form)
 
 
-class UserFriends(LoginRequiredMixin, ListView):
+class Users(LoginRequiredMixin, ListView):
 
     """Контроллер для отображения профилей
 

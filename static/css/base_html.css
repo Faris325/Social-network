@@ -14,3 +14,17 @@ button {
     width: 150px; /* Уменьши по необходимости */
 }
 
+header {
+  font-size: 16px !important;      /* Жёстко задаём размер */
+  line-height: 1.2 !important;     /* Фиксируем высоту строки */
+  font-weight: normal !important;  /* Фиксируем вес шрифта */
+  color: #000 !important;           /* Жёстко цвет, если нужно */
+  transition: none !important;      /* Отключаем переходы */
+  user-select: none !important;     /* Если нужно, запрет выбора */
+}
+
+#settingsDropdown {
+  outline: none !important;
+  box-shadow: none !important;
+}
+

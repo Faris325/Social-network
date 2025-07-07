@@ -41,10 +41,9 @@ urlpatterns = [
     path('logout/', views.UserLogoutView.as_view(), 
          name = 'logout'
          ),  
-    path('profile/friends', views.UserFriends.as_view(), 
+    path('profile/users/', views.Users.as_view(), 
          name = 'search_friends'
          ),
-
 
 ]
 

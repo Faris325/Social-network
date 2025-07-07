@@ -1,12 +1,19 @@
 {% load static %}
+{% load tz %}
 <section class="chat-panel" aria-label="Диалог с пользователем">
   <div class="chat-header">
     {% if user != dialog_user %}
-      {{ dialog_user.first_name }} {{ dialog_user.last_name }}
+      <a href="{% url "friends:friend-profile" dialog_user.id%}">
+        {{ dialog_user.first_name }} {{ dialog_user.last_name }}
+      </a>
       {% if  dialog_user.image %}
-        <img src="{{dialog_user.image.url}}" alt="фото" class="message-avatar-img">
+        <a href="{% url "friends:friend-profile" dialog_user.id%}">
+          <img src="{{dialog_user.image.url}}" alt="фото" class="message-avatar-img">
+        </a>
       {% else %}
-        <img src="{% static 'image/profile_image/profile.webp' %}" alt="фото" class="message-avatar-img">
+        <a href="{% url "friends:friend-profile" dialog_user.id%}">
+          <img src="{% static 'image/profile_image/profile.webp' %}" alt="фото" class="message-avatar-img">
+        </a>
     {% endif %}
     {% else %}
     Избранное
@@ -17,8 +24,10 @@
     {% for personal_message in personal_messages %}
       <div class="message-item {% if personal_message.sender == user %}sent{% else %}received{% endif %}">
         <div class="message-content">
-          <p>{{ personal_message.content }}</p>
-          <span class="timestamp">{{ personal_message.timestamp|date:"d.m.Y H:i" }}</span>
+          <p>{{ personal_message.content }}</p>  
+          {% timezone user.time_zone %}
+            <span class="timestamp">{{ personal_message.timestamp|date:"d.m.Y H:i" }}</span>
+          {% endtimezone %}
         </div>
       </div>
     {% empty %}

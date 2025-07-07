@@ -1,51 +1,79 @@
 {% extends "base.html" %}
-{% block content %}
+{% load static %}
 
-<body class="bg-light">
+{% block css %}
+<link rel="stylesheet" href="{% static "css/publications.css" %}">
+{% endblock css %}
+
+{% block content %}
   <div class="container py-4">
 
-    <!-- Форма для добавления своей публикации -->
-    <div class="card mb-4">
-      <div class="card-body">
-        <h3 class="card-title">Создать публикацию</h3>
-        <form action="{% url "publications:publication" %}" method="post"  enctype="multipart/form-data">
-          {% csrf_token %}
-          <div class="mb-3">
-            <textarea name="text" class="form-control" rows="3" placeholder="О чём вы думаете?"></textarea>
+      {% for publication in publications %}
+      <div class="card mb-3 "id="publication-{{publication.id}}" data-publication-id="{{publication.id}}">
+        <div class="card-body">
+          <div class="fw-bold d-flex justify-content-between">
+            {% if publication.user.image %}
+            <a href="{% url "friends:friend-profile" publication.user.id%}">
+              <img class = "round-image"  src="{{publication.user.image.url}}" alt="Фото">
+            </a>
+            {% else %}
+              <a href="{% url "friends:friend-profile" publication.user.id%}">
+                <img class = "round-image" src="{% static "image/profile_image/profile.webp" %}" alt="фото">
+              </a>
+            {% endif %}
+            <span>{{ publication.user.first_name }} {{ publication.user.last_name }}: {{ publication.created_at }}</span>
+            {% if user == publication.user %}
+              <button data-id="{{publication.id}}" class="delete-publication"><img src="{% static "image/delete.png" %}" alt="Удалить"></button>
+            {% endif %}
           </div>
-          <div class="mb-3">
-            <input type="file" name="media" accept="image/*,video/*" class="form-control mb-2" id="mediaInput">
-          <button type="submit" class="btn btn-dark">Опубликовать</button>
-        </form>
-      </div>
-    </div>
-    {% for publication in publications %}
-    <div class="card mb-3" id="publication-{{publication.id}}">
-      <div class="card-body">
-        <div class="fw-bold d-flex justify-content-between">
-          <span>{{ publication.user.first_name }} {{ publication.user.last_name }}: {{ publication.created_at }}</span>
-          {% if user == publication.user %}
-            <button data-id="{{publication.id}}" class="delete-publication">&#10006;</button>
-          {% endif %}
-        </div>
-    
-        <div class="mb-2">{{ publication.text }}</div>
-    
-    {% if publication.media %}
-      {% if publication.media.name|lower|slice:"-4:" == ".mp4" or publication.media.name|lower|slice:"-4:" == ".avi" %}
-          <video controls class="img-fluid rounded">
-              <source src="{{ publication.media.url }}" type="video/mp4">
-              Ваш браузер не поддерживает воспроизведение видео.
-          </video>
-      {% else %}
-          <img src="{{ publication.media.url }}" alt="Media" class="img-fluid rounded">
+          <div class="mb-2">{{ publication.text }}</div>
+      {% if publication.media %}
+        {% if publication.media.name|lower|slice:"-4:" == ".mp4" or publication.media.name|lower|slice:"-4:" == ".avi" %}
+            <video controls class="img-fluid rounded">
+                <source src="{{ publication.media.url }}" type="video/mp4">
+                Ваш браузер не поддерживает воспроизведение видео.
+            </video>
+        {% else %}
+            <img src="{{ publication.media.url }}" alt="Media" class="img-fluid rounded">
+        {% endif %}
       {% endif %}
-    {% endif %}
+        </div>
       </div>
-    </div>
-    {% endfor %}
+      {% empty %}
+      <p>Пока</p>
+      {% endfor %}
  
   </div>
-</body>
+<script>
+    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+    document.querySelectorAll('.delete-publication').forEach(button => {
+        button.addEventListener('click', function () {
+            const publicationId = this.dataset.id;
+            const buttonElement = this;
+
+            fetch("{% url 'publications:publication-delete' %}", {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': csrftoken,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ publication_id: publicationId })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'ok') {
+                    // Например, скрыть удалённую публикацию
+                    buttonElement.closest('.card').remove();
+                } else {
+                    alert('Ошибка при удалении');
+                }
+            })
+            .catch(error => {
+                console.error('Ошибка:', error);
+            });
+        });
+    });
+</script>
 {% endblock content %}
 </html>

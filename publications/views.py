@@ -1,3 +1,9 @@
+"""
+    Модуль с контроллерами приложения publications
+
+    PublicationView - контроллер для отображения и создания публикаций
+    PublicationDelete - контроллер для удаления публикаций
+"""
 import json
 
 from django.views.generic.edit import CreateView
@@ -18,7 +24,7 @@ class PublicationsView(LoginRequiredMixin, CreateView):
     
     form_class = UserRegisterForm
     template_name = 'publications.html'
-    success_url = reverse_lazy('publications:publication')
+    success_url = reverse_lazy('users:profile')
 
     def form_valid(self, form):
         """Метод для валидации объекта формы

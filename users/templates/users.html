@@ -19,12 +19,18 @@
                 <div class="col-md-4">
                     <div class="card mb-3">
                         {% if user.image %}
-                            <img src="{{user.image.url}}" class="card-img-top" alt="{{ user.first_name }}">
+                            <a href="{% url "friends:friend-profile" user.id%}">
+                                <img src="{{user.image.url}}" class="card-img-top" alt="{{ user.first_name }}">
+                            </a>
                         {% else %}
-                            <img src="{% static 'image/profile_image/profile.webp' %}" class="card-img-top" alt="Нет фото">
+                            <a href="{% url "friends:friend-profile" user.id%}">
+                                <img src="{% static 'image/profile_image/profile.webp' %}" class="card-img-top" alt="Нет фото">
+                            </a>
                         {% endif %}
                         <div class="card-body">
-                            <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+                            <a href="{% url "friends:friend-profile" user.id%}">
+                                <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+                            </a>
                             <div class = 'friend_add'>
                                 {% if user not in sent_friends and user not in add_friends %}
                                     <input type="hidden" name="receiver" value="{{ user.id }}">

@@ -38,9 +38,16 @@ class User(AbstractUser):
             max_length=50, blank=True, 
             null=True
             )
-    sunset_time = models.DateField(
-        blank=True, null=True
+    last_seen = models.DateTimeField(
+        auto_now = True,blank=True, 
+        null=True
         )
+    
+    time_zone = models.CharField(
+        blank = True, null = True, 
+        default = 'UTC')
+    
+
     
     USERNAME_FIELD = 'phone_number' 
     

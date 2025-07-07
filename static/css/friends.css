@@ -4,3 +4,17 @@ img {
     height: 150px;
     object-fit: contain;
 }
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+#friendsTabs .nav-link:not(.active) {
+  color: black !important;
+}
+
+/* Активная вкладка — стандартный цвет (или можно задать свой) */
+#friendsTabs .nav-link.active {
+  color: #000000; /* Bootstrap синий по умолчанию */
+}

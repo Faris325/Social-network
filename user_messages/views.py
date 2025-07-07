@@ -1,4 +1,10 @@
+"""
+    Контроллер приложения user_messages
 
+    UserMessagesView - Контроллер для отображения диалогов пользователя
+    UserMessageView - Контроллер для отображения конкретного диалога
+
+"""
 from django.shortcuts import render
 from django.db.models import Q
 from django.views.generic import View
@@ -60,7 +66,7 @@ class UserMessageView(LoginRequiredMixin, CreateView):
 
         personal_messages = users_messages.filter(
             Q(sender = self.kwargs['user_id'], recipient = self.request.user)|
-            Q(sender = self.request.user, recipient = self.kwargs['user_id']))
+            Q(sender = self.request.user, recipient = self.kwargs['user_id'])).order_by('timestamp')
 
         context['users'] = users
         context['chat_user'] = True # Активирует icnlude 

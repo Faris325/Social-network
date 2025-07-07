@@ -1,5 +1,17 @@
+"""Модуль с контроллерами для приложения friends
+
+   AddFriend - Контроллер для добавления в друзья
+   FriendsList - Контроллер для вывода друзей пользователя, а так же заявок
+   FriendAccept - Контроллер для принятия заявок в друзья
+   FriendCancellation - Контроллер для отмены исходящяй заявки в друзья
+   FriendReject - Контроллер для отмены входящяй заявки в друзья
+   FriendDelete - Контроллер для удаления друга 
+   FriendProfileView - Контроллер для отображения профиля
+
+"""
 import json
 
+from django.shortcuts import render
 from django.views import View
 from django.views.generic import ListView
 from django.db.models import Q
@@ -9,6 +21,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from notifications.models import Notifications
 from users.models import User
 from friends.models import Friends
+from publications.models import Publications
 
 class AddFriend(LoginRequiredMixin, View):
 
@@ -19,7 +32,6 @@ class AddFriend(LoginRequiredMixin, View):
         """
             Данные отправляющего(sender) берутся из request, а для получаешего
             берется из формы при выводе пользователей.
-            ----------------------
             сохраняется по итогу сохраняется запись в таблице с отправляющим,
             заявку, принимающим, а так же статус запроса, в данном случае это 
             будет pending (ожидающий)
@@ -130,12 +142,10 @@ class FriendAccept(LoginRequiredMixin, View):
 
 class FriendCancellation(LoginRequiredMixin, View):
 
-    """Контроллр для отмены исходящей заявки в друзья  
-    """
+    """Контроллр для отмены исходящей заявки в друзья"""
 
     def post(self, request):
         sender = request.user
-
         data = json.loads(request.body)
         receiver = User.objects.get(id = data['user_id'])
 
@@ -186,6 +196,31 @@ class FriendDelete(LoginRequiredMixin,View):
               application_status = 'accepted')).delete()
 
         return JsonResponse({'status': 'ok'})
+    
+
+
+class FriendProfileView(LoginRequiredMixin, View):
+
+    """Контроллер для отображения профиля другого пользователя
+    """ 
+
+    def get(self, request, **kwargs):
+        friend = User.objects.get(id = kwargs['id'])
+
+        publications = Publications.objects.filter(user = kwargs['id'])
+        
+        context = {
+            'title': 'Профиль',
+            'publications': publications,
+            'friend':friend,
+            }
+        
+        if friend == request.user:
+            context['me_user'] = True
+        else:
+            context['is_friend_profile'] = True
+
+        return render(request, 'profile.html', context)
 
 
 

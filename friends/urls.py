@@ -35,7 +35,10 @@ urlpatterns = [
     path('profile/friends/reject',views.FriendReject.as_view(),
          name = 'friend-reject'),
     path('profile/friends/delete',views.FriendDelete.as_view(),
-         name = 'friend-delete'),          
+         name = 'friend-delete'),
+     path('profile/friends/<int:id>/',views.FriendProfileView.as_view(),
+         name = 'friend-profile'),
+               
     ]
     
     
