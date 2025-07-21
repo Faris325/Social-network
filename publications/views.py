@@ -52,12 +52,14 @@ class PublicationsView(LoginRequiredMixin, CreateView):
         friends_id = list(Friends.objects.filter(
             Q(sender=self.request.user, application_status='accepted')|
             Q(receiver=self.request.user, application_status='accepted')
-            ).values_list('id'))
+            ).values_list('id')
+            )
         
         friends_id.append(self.request.user.id)
 
         publications = (Publications.objects.filter(user__in=friends_id)
-                        .order_by('created_at'))
+                        .order_by('created_at')
+                        )
 
         paginate_publications = Paginator(publications, 6)
         context['publications'] = paginate_publications.page(1)
@@ -68,34 +70,30 @@ class PublicationsView(LoginRequiredMixin, CreateView):
         if not self.request.GET.get('page'):
             return super().get(request, *args, **kwargs)
         else:
-            self.object = None  # ← добавь это обязательно!
+            self.object = None  # Обязательная заглушка
+
             context = self.get_context_data()
+
             page_number = self.request.GET.get('page')
-            friends = Friends.objects.filter(
+
+            friends_id = list(Friends.objects.filter(
             Q(sender=self.request.user, application_status='accepted')|
             Q(receiver=self.request.user, application_status='accepted')
-            ).select_related('sender', 'receiver')  
-            friends_id = []
+            ).values_list('id')
+            )
             friends_id.append(self.request.user.id)
 
-            for friend in friends:
-                if friend.sender == self.request.user:
-                    friends_id.append(friend.receiver.id)
-                else:
-                    friends_id.append(friend.sender.id)
+            publications = (Publications.objects.filter(user__in=friends_id)
+                            .order_by('created_at')
+                            )
 
-            users_publications = (Publications.objects.all()
-                              .order_by('-created_at').select_related("user"))
-        
-            friends_publications = []
+            paginate_publications = Paginator(publications, 6)
 
-            for user_publication in users_publications:
-                if user_publication.user.id in friends_id:
-                    friends_publications.append(user_publication)
+            html = render_to_string('includes/publication_card.html', context, 
+                                    request=self.request
+                                    )
 
-            paginate_publications = Paginator(friends_publications, 6) 
             context['publications'] = paginate_publications.page(page_number) 
-            html = render_to_string('includes/publication_card.html', context, request=self.request)
             return JsonResponse({'html': html})
     
 
