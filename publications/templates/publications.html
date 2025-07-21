@@ -39,7 +39,7 @@
         </div>
       </div>
       {% empty %}
-      <p>Пока</p>
+      <p>Пока нет публикаций</p>
       {% endfor %}
  
   </div>
@@ -83,10 +83,11 @@ window.addEventListener("scroll", () => {
         loading = true;
         page += 1;
 
-        fetch(`{% url 'publications:publication' %}?page=${page}`)
+        fetch(`/publications/?page=${page}`)
             .then(response => response.json())
             .then(data => {
-                document.getElementById("post-container").insertAdjacentHTML("beforeend", data);
+                // Добавьте ваш код для вставки новых публикаций, например:
+                document.getElementById("post-container").insertAdjacentHTML("beforeend", data.html);
                 loading = false;
             })
             .catch(error => {

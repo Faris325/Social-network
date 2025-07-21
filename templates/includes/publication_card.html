@@ -1,0 +1,36 @@
+{% load static %}
+{% for publication in publications %}
+      <div class="card mb-3"id="publication-{{publication.id}}" data-publication-id="{{publication.id}}">
+        <div class="card-body">
+          <div class="fw-bold d-flex justify-content-between">
+            {% if publication.user.image %}
+            <a href="{% url "friends:friend-profile" publication.user.id%}">
+              <img class = "round-image"  src="{{publication.user.image.url}}" alt="Фото">
+            </a>
+            {% else %}
+              <a href="{% url "friends:friend-profile" publication.user.id%}">
+                <img class = "round-image" src="{% static "image/profile_image/profile.webp" %}" alt="фото">
+              </a>
+            {% endif %}
+            <span>{{ publication.user.first_name }} {{ publication.user.last_name }}: {{ publication.created_at }}</span>
+            {% if user == publication.user %}
+              <button data-id="{{publication.id}}" class="delete-publication"><img src="{% static "image/delete.png" %}" alt="Удалить"></button>
+            {% endif %}
+          </div>
+          <div class="mb-2">{{ publication.text }}</div>
+      {% if publication.media %}
+        {% if publication.media.name|lower|slice:"-4:" == ".mp4" or publication.media.name|lower|slice:"-4:" == ".avi" %}
+            <video controls class="img-fluid rounded">
+                <source src="{{ publication.media.url }}" type="video/mp4">
+                Ваш браузер не поддерживает воспроизведение видео.
+            </video>
+        {% else %}
+            <img src="{{ publication.media.url }}" alt="Media" class="img-fluid rounded">
+        {% endif %}
+      {% endif %}
+        </div>
+      </div>
+      {% empty %}
+      <p>Пока</p>
+      {% endfor %}
+  </div>

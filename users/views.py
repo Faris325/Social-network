@@ -123,7 +123,8 @@ class UserProfileView(LoginRequiredMixin, View):
     """Контроллер для отображения профиля""" 
 
     def get(self, request):
-        publications = Publications.objects.filter(user = request.user)
+        publications = (Publications.objects.filter(user = request.user)
+                        .order_by('-created_at'))
         
         context = {
             'title': 'Профиль',

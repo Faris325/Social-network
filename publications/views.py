@@ -13,10 +13,12 @@ from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
+from django.template.loader import render_to_string
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
 from friends.models import Friends
+
 
 class PublicationsView(LoginRequiredMixin, CreateView):
 
@@ -40,50 +42,61 @@ class PublicationsView(LoginRequiredMixin, CreateView):
         """
         Добавляет в контекст публикации пользователя и его друзей.
 
-        1. Получает список друзей текущего пользователя.
-        2. Формирует список ID друзей и самого пользователя.
-        3. Фильтрует публикации, оставляя только те, что принадлежат этим ID.
-        4. Добавляет их в контекст для отображения в шаблоне.
+        1. Получает список id друзей текущего пользователя и самого 
+           пользователя.
+        2. Получает публикации которые относятся к этим id 
+        3. Добавляет публикации в контекст для отображения в шаблоне.
         """
         context = super().get_context_data(**kwargs)
 
-        friends = Friends.objects.filter(
+        friends_id = list(Friends.objects.filter(
+            Q(sender=self.request.user, application_status='accepted')|
+            Q(receiver=self.request.user, application_status='accepted')
+            ).values_list('id'))
+        
+        friends_id.append(self.request.user.id)
+
+        publications = (Publications.objects.filter(user__in=friends_id)
+                        .order_by('created_at'))
+
+        paginate_publications = Paginator(publications, 6)
+        context['publications'] = paginate_publications.page(1)
+      
+        return context
+
+    def get(self,request, *args, **kwargs):
+        if not self.request.GET.get('page'):
+            return super().get(request, *args, **kwargs)
+        else:
+            self.object = None  # ← добавь это обязательно!
+            context = self.get_context_data()
+            page_number = self.request.GET.get('page')
+            friends = Friends.objects.filter(
             Q(sender=self.request.user, application_status='accepted')|
             Q(receiver=self.request.user, application_status='accepted')
             ).select_related('sender', 'receiver')  
-        friends_id = []
-        friends_id.append(self.request.user.id)
+            friends_id = []
+            friends_id.append(self.request.user.id)
 
-        for friend in friends:
-            if friend.sender == self.request.user:
-                friends_id.append(friend.receiver.id)
-            else:
-                friends_id.append(friend.sender.id)
+            for friend in friends:
+                if friend.sender == self.request.user:
+                    friends_id.append(friend.receiver.id)
+                else:
+                    friends_id.append(friend.sender.id)
 
-        users_publications = (Publications.objects.all()
+            users_publications = (Publications.objects.all()
                               .order_by('-created_at').select_related("user"))
         
-        friends_publications = []
+            friends_publications = []
 
-        for user_publication in users_publications:
-            if user_publication.user.id in friends_id:
-                friends_publications.append(user_publication)
+            for user_publication in users_publications:
+                if user_publication.user.id in friends_id:
+                    friends_publications.append(user_publication)
 
-        paginate_publications = Paginator(friends_publications, 6)
-        if self.request.GET.get('page'):
-            paginate_page = paginate_publications.page(self.request.GET.get('page'))
-            publication_list = []
-            for pub in paginate_page.object_list:
-                publication_list.append({'id': pub.id,
-                                         'text': pub.text,
-                                         'created_at': pub.created_at,
-                                         'user_id': pub.user_id,
-                                         'media': pub.media 
-                                         })
-            return JsonResponse({'publications': publication_list})
-        else:
-             context['publications'] = paginate_publications.page(1)
-        return context
+            paginate_publications = Paginator(friends_publications, 6) 
+            context['publications'] = paginate_publications.page(page_number) 
+            html = render_to_string('includes/publication_card.html', context, request=self.request)
+            return JsonResponse({'html': html})
     
 
 class PublicationDelete(LoginRequiredMixin, View):
