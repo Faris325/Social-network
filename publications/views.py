@@ -89,11 +89,11 @@ class PublicationsView(LoginRequiredMixin, CreateView):
 
             paginate_publications = Paginator(publications, 6)
 
+
+            context['publications'] = paginate_publications.page(page_number) 
             html = render_to_string('includes/publication_card.html', context, 
                                     request=self.request
                                     )
-
-            context['publications'] = paginate_publications.page(page_number) 
             return JsonResponse({'html': html})
     
 
