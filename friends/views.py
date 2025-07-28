@@ -17,6 +17,10 @@ from django.views.generic import ListView
 from django.db.models import Q
 from django.http import JsonResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Case
+from django.db.models import When
+from django.db.models import F
+from django.db.models import IntegerField  
 
 from notifications.models import Notifications
 from users.models import User
@@ -69,30 +73,21 @@ class FriendsList(LoginRequiredMixin, ListView):
     context_object_name = 'friends'
 
     def get_queryset(self):
-        """ Возвращает QuerySet пользователей, которые являются друзьями 
-            текущего пользователя(Вернет все записи в которых пользователь 
-            отправитель или принимающий с параметром что заявка в друзья 
-            accepted)
-
-            Если пользователь отправлял запрос, то по записи вернет id 
-            друга(recender), а если принимающим опять же вернет по записи id 
-            друга(sender). Эти id добавятся в список, с помощью которого 
-            поступит запрос на получение кварисета.
-            По итогу будет возвращен кварисет друзей текущего пользователя.
+        """ Получение кварисета пользователей
         """
-        applications = Friends.objects.filter(
+        friends_id = list(Friends.objects.filter(
                 Q(sender=self.request.user, application_status='accepted') |
                 Q(receiver=self.request.user, application_status='accepted')
-                ).select_related('sender', 'receiver')  
+                ).annotate(friend_id=Case(
+                    When(sender=self.request.user, then=F('receiver_id')),
+                    When(receiver=self.request.user, then=F('sender_id')),
+                    output_field=IntegerField()
+                )
+            ).values_list('friend_id', flat=True)
+        )
         
-        friends = []
-        for application in applications:
-            if application.sender == self.request.user:
-                friends.append(application.receiver.id)
-            else:
-                friends.append(application.sender.id)
 
-        return User.objects.filter(id__in=friends)
+        return User.objects.filter(id__in=friends_id)
     
     def get_context_data(self, **kwargs):
         """Метод для получения кварисетов входящих и исходящих запросов в 

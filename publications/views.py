@@ -6,7 +6,6 @@
 """
 import json
 
-from django.dispatch import receiver
 from django.db.models import IntegerField 
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
