@@ -6,14 +6,20 @@
 """
 import json
 
+from django.dispatch import receiver
+from django.db.models import IntegerField 
 from django.views.generic.edit import CreateView
 from django.urls import reverse_lazy
 from django.db.models import Q
+from django.db.models import Case 
+from django.db.models import When
+from django.db.models import F
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.core.paginator import Paginator
 from django.template.loader import render_to_string
+
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
@@ -48,17 +54,22 @@ class PublicationsView(LoginRequiredMixin, CreateView):
         3. Добавляет публикации в контекст для отображения в шаблоне.
         """
         context = super().get_context_data(**kwargs)
-
+    
         friends_id = list(Friends.objects.filter(
             Q(sender=self.request.user, application_status='accepted')|
             Q(receiver=self.request.user, application_status='accepted')
-            ).values_list('id')
+            ).annotate(friend_id = Case(
+                When(sender=self.request.user, then=F('receiver_id')),
+                When(receiver=self.request.user, then=F('sender_id')),
+                output_field=IntegerField()
             )
-        
+            ).values_list('friend_id', flat=True))
+
         friends_id.append(self.request.user.id)
 
+
         publications = (Publications.objects.filter(user__in=friends_id)
-                        .order_by('created_at')
+                        .select_related("user").order_by('-created_at')
                         )
 
         paginate_publications = Paginator(publications, 6)
@@ -79,12 +90,17 @@ class PublicationsView(LoginRequiredMixin, CreateView):
             friends_id = list(Friends.objects.filter(
             Q(sender=self.request.user, application_status='accepted')|
             Q(receiver=self.request.user, application_status='accepted')
-            ).values_list('id')
+            ).annotate(friend_id = Case(
+                When(sender=self.request.user, then=F('receiver_id')),
+                When(receiver=self.request.user, then=F('sender_id')),
+                output_field=IntegerField()
             )
+            ).values_list('friend_id', flat=True))
+
             friends_id.append(self.request.user.id)
 
             publications = (Publications.objects.filter(user__in=friends_id)
-                            .order_by('created_at')
+                            .select_related("user").order_by('-created_at')
                             )
 
             paginate_publications = Paginator(publications, 6)
