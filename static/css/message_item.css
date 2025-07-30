@@ -39,7 +39,7 @@
 }
 
 .message-content {
-  background-color: #e9f5ff;
+  background-color: #ececec;
   padding: 10px 14px;
   border-radius: 14px;
   box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -76,7 +76,7 @@
 
 .chat-form button {
   padding: 0 16px;
-  background-color: #4a76a8;
+  background-color: #4c4d50;
   color: white;
   border: none;
   border-radius: 8px;
@@ -85,7 +85,7 @@
 }
 
 .chat-form button:hover {
-  background-color: #3c5e88;
+  background-color: #000000;
 }
 
 a {

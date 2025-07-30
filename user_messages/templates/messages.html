@@ -4,6 +4,7 @@
 {% block css %}
   <link rel="stylesheet" href="{% static 'css/messages.css' %}">
   <link rel="stylesheet" href="{% static 'css/message_item.css' %}">
+  
 {% endblock css %}
 
 {% block content %}
@@ -12,13 +13,16 @@
   <!-- Список диалогов -->
   <aside class="dialogs-list" aria-label="Список диалогов">
     <h2>Диалоги</h2>
+    <a href="{% url "user_messages:messages" user.id %}" class="dialog-link">  
+      <div class="dialog-item {% if user == dialog_user %}custom-gray-bg{% endif %}">
+        <div class="dialog-avatar">⭐</div>
+        <div class="dialog-username">Избранное</div>
+      </div>
+    </a> 
     {% for u in users %}
       <a href="{% url "user_messages:messages" u.id %}" class="dialog-link">  
+        {% if u != user %}
         <div class="dialog-item {% if u == dialog_user %}custom-gray-bg{% endif %}">
-          {% if u == user %}
-            <div class="dialog-avatar">⭐</div>
-            <div class="dialog-username">Избранное</div>
-          {% else %}
             <div class="dialog-avatar">
               {% if u.image %}
                 <img src="{{ u.image.url }}" alt="фото" class="message-avatar-img">
@@ -27,8 +31,8 @@
               {% endif %}
             </div>
             <div class="dialog-username">{{ u.first_name }} {{ u.last_name }}</div>
-          {% endif %}
         </div>
+        {% endif %}
       </a>
     {% endfor %}
   </aside>

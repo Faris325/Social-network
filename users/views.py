@@ -10,7 +10,7 @@
 
 """
 
-from django.dispatch import receiver
+
 from django.http import HttpResponseRedirect
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
@@ -26,6 +26,10 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.contrib.postgres.search import SearchVector
 from django.contrib.postgres.search import SearchQuery
+from django.db.models import Case
+from django.db.models import When
+from django.db.models import F
+from django.db.models import IntegerField  
 
 from users.forms import UserLoginForm
 from users.forms import UserRegisterForm
@@ -207,9 +211,9 @@ class Users(LoginRequiredMixin, ListView):
     """
 
 
-    context_object_name = 'qury_users'
+    context_object_name = 'query_users'
     template_name = 'users.html'
-    paginate_by = 10
+    paginate_by = 9
 
     def get_context_data(self,*, object_list = None, **kwargs):
         """ Добавление дополнительных аргументов для контекста 
@@ -223,36 +227,31 @@ class Users(LoginRequiredMixin, ListView):
            заявка и она в статусе pending
            friends_query - кварисет друзей пользователя 
 
-           Перебираются все пользователи, кроме текущего, если полльзователь
-           есть в кварисете sent_friends_query, то объект добавляется в список
-           sent_friends, если пользователь находится в кварисете friends_query
-           то он добавится в список  add_friends.
 
            Эти списки будут использованы в шаблоне следующим образом: 
            Например если выводимый пользователь есть в списке sent_freiends, то
            будет надпись "отпарвлена заявка" 
         """
-        sent_friends = []
-        add_friends = []
 
-        sent_friends_query = list(Friends.objects.filter(
+
+        sent_friends = list(Friends.objects.filter(
             sender=self.request.user, application_status = 'pending'
-            ))
-        
-        friends_query = list(Friends.objects.filter(
-            Q(sender=self.request.user, application_status = 'accepted')
-            |Q(receiver=self.request.user, application_status = 'accepted'))
+            ).values_list('receiver_id',flat=True)
             )
         
-        friends = self.object_list
-        for user in friends:
-            if user in sent_friends_query:
-                sent_friends.append(user)
-            elif user in friends_query:
-                add_friends.append(user)
-
+        friends_id = list(Friends.objects.filter(
+                Q(sender=self.request.user, application_status='accepted') |
+                Q(receiver=self.request.user, application_status='accepted')
+                ).annotate(friend_id=Case(
+                    When(sender=self.request.user, then=F('receiver_id')),
+                    When(receiver=self.request.user, then=F('sender_id')),
+                    output_field=IntegerField()
+                )
+            ).values_list('friend_id', flat=True)
+        )
+ 
         kwargs['sent_friends'] = sent_friends
-        kwargs['add_friends'] = add_friends
+        kwargs['add_friends'] = friends_id
 
         return super().get_context_data(**kwargs)
      

@@ -1,26 +1,60 @@
-.users-profiles{
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.users-profiles {
+    /* Используем row Bootstrap, не нужно переопределять display:flex, чтобы сохранить сетку */
+    margin-bottom: 1rem;
 }
 
-.profiles-container{
+.profiles-container {
+    /* Центрируем содержимое, уже есть в Bootstrap, можно не менять */
     display: flex;
     flex-direction: column;
     align-items: center;
 }
 
 .image_friend_add {
-    width: 32px;     
+    width: 32px;
     height: 32px;
     object-fit: contain;
 }
 
-.friend_add{
+.friend_add {
     display: flex;
+    align-items: center;
 }
 
 a {
     text-decoration: none;
     color: black;
+}
+.pagination {
+    --bs-pagination-color: #6c757d; /* серый текст */
+    --bs-pagination-bg: #e9ecef; /* светло-серый фон */
+    --bs-pagination-border-color: #dee2e6;
+
+    --bs-pagination-hover-color: #495057;
+    --bs-pagination-hover-bg: #dee2e6;
+    --bs-pagination-hover-border-color: #ced4da;
+
+    --bs-pagination-active-color: #fff;
+    --bs-pagination-active-bg: #6c757d; /* активная кнопка — тёмно-серая */
+    --bs-pagination-active-border-color: #6c757d;
+
+    --bs-pagination-disabled-color: #adb5bd;
+    --bs-pagination-disabled-bg: #f8f9fa;
+    --bs-pagination-disabled-border-color: #dee2e6;
+}
+.card {
+    height: 500px;
+    display: flex;
+    flex-direction: column;
+}
+
+.card-img-top {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px 4px 0 0;
+}
+
+.card-body {
+    flex-grow: 1;
 }
