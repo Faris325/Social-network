@@ -28,3 +28,11 @@ header {
   box-shadow: none !important;
 }
 
+.navbar-nav .nav-link,
+.navbar-brand {
+    font-size: 18px; /* Увеличь до нужного значения */
+}
+
+* {
+    font-family: 'Roboto', Arial, sans-serif !important; /* Устанавливет один шрифт для всего вообще*/
+}
