@@ -24,7 +24,17 @@
     {% for personal_message in personal_messages %}
       <div class="message-item {% if personal_message.sender == user %}sent{% else %}received{% endif %}">
         <div class="message-content">
-          <p>{{ personal_message.content }}</p>  
+          <p>{{ personal_message.content }}</p> 
+            {% if personal_message.media %}
+              {% if personal_message.media.name|lower|slice:"-4:" == ".mp4" or personal_message.media.name|lower|slice:"-4:" == ".avi" %}
+              <video controls class="message-media">
+                <source src="{{ personal_message.media.url }}" type="video/mp4">
+                Ваш браузер не поддерживает воспроизведение видео.
+            </video>
+          {% else %}
+          <img src="{{ personal_message.media.url }}" alt="Media" class="message-media">
+          {% endif %}
+          {% endif %}
           {% timezone user.time_zone %}
             <span class="timestamp">{{ personal_message.timestamp|date:"d.m.Y H:i" }}</span>
           {% endtimezone %}
@@ -36,7 +46,11 @@
   </div>
 
   <form id="chat-message-form" class="chat-form">
-    <textarea id="chat-message-input" rows="2" placeholder="Введите сообщение..." required></textarea>
+    <textarea id="chat-message-input" rows="1" placeholder="Введите сообщение..."></textarea>
+    <input id="upload_media" type="file" style="display: none;" accept="image/*,video/*">
+    <label for="upload_media">
+      <img class = "file_add" src="{% static "image/add_file.png" %}" alt="Прикрепить файл">
+    </label>
     <button type="submit" class = "btn btn-dark">➤</button>
   </form>
 </section>

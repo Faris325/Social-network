@@ -11,6 +11,6 @@ class MessageForm(forms.ModelForm):
         model = Messages
         fields = [
             'sender','recipient',
-            'content', 
+            'content','media' 
             ]
 

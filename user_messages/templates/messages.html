@@ -48,50 +48,83 @@
 
 <!-- Скрипты -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    const otherUserId = {{ dialog_user.id }};  // id собеседника
-    const currentUserId = {{ user.id }}; // id текущего пользователя 
-    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws"; // Выбор ws или wss в зависимости от http или https 
+<script>
+  const otherUserId = {{ dialog_user.id }};  // id собеседника
+  const currentUserId = {{ user.id }}; // id текущего пользователя 
+  const wsScheme = window.location.protocol === "https:" ? "wss" : "ws"; // Выбор ws или wss в зависимости от http или https 
 
-    const chatSocket = new WebSocket(
-      wsScheme + "://" + window.location.host + `/ws/chat/${otherUserId}/` // открытие веб- скоет соединения
-    );
+  const chatSocket = new WebSocket(
+    wsScheme + "://" + window.location.host + `/ws/chat/${otherUserId}/` // открытие веб-сокет соединения
+  );
 
-    chatSocket.onmessage = function(e) { // сервер присылает всем участникам комнаты это сообщение 
-      const data = JSON.parse(e.data); // json-строка, которую прислал сервер, преобразование ее в json-объект 
-      const message = data.message; // Создание переменноой с сообщением которое отправил пользователь
-      const senderId = data.sender_id; // id пользователя который отправил сообщение 
+  chatSocket.onmessage = function(e) { // сервер присылает всем участникам комнаты это сообщение 
+    const data = JSON.parse(e.data); // json-строка, которую прислал сервер, преобразование ее в json-объект 
+    const message = data.message; // Создание переменной с сообщением текста, который отправил пользователь
+    const media = data.media_file; // C переменной с сообщением файла, который отпарвил пользователь 
+    const senderId = data.sender_id; // id пользователя, который отправил сообщение 
 
-      const chatLog = document.getElementById("chatMessages"); // находит элемент на странице с id = "chatMessages" и сохраняет в переменную(div контейнер в include)
+    const chatLog = document.getElementById("chatMessages"); // находит элемент на странице с id = "chatMessages" и сохраняет в переменную(div контейнер в include)
 
-      const msgElement = document.createElement("div"); // Создает элемент div и сохраняет его в переменноой
-      msgElement.classList.add("message-item"); // к элементу div добавляется класс message-item 
-      if (senderId === currentUserId) {   // Если sender id совпадает с currentId(то есть сообщение отправил текущий пользователь), то к элементу добавляется класс sent) 
-        msgElement.classList.add("sent"); 
-      } else {
-        msgElement.classList.add("received"); // Если это сообщение от другого пользователя, добавляется класс "received"
-      }
+    const msgElement = document.createElement("div"); // Создаёт элемент div и сохраняет его в переменную
+    msgElement.classList.add("message-item"); // к элементу div добавляется класс message-item 
+    if (senderId === currentUserId) {   // Если sender id совпадает с currentId (то есть сообщение отправил текущий пользователь), то к элементу добавляется класс sent
+      msgElement.classList.add("sent"); 
+    } else {
+      msgElement.classList.add("received"); // Если это сообщение от другого пользователя, добавляется класс "received"
+    }
 
-      msgElement.innerHTML = `  
-        <div class="message-content">
-          <p>${message}</p>
-          <span class="timestamp">${new Date().toLocaleString()}</span>  
-        </div>
-      `;                                                                // Кладет в новый блок div содержимое 
+    msgElement.innerHTML = `  
+      <div class="message-content">
+      <p>${message}</p>
+      ${media ? `<img src="${media}" alt="media content" class="message-media">` : ''}
+      <span class="timestamp">${new Date().toLocaleString()}</span>  
+      </div>`;  // Кладёт в новый блок div содержимое 
 
-      chatLog.appendChild(msgElement); // добавит внутрь chatlog новый элемент, котоырый был создан выше
-      chatLog.scrollTop = chatLog.scrollHeight; // прокручивает список сообщений вниз
-    };
+    chatLog.appendChild(msgElement); // добавляет внутрь chatLog новый элемент, который был создан выше
+    chatLog.scrollTop = chatLog.scrollHeight; // прокручивает список сообщений вниз
+  };
 
-    document.getElementById("chat-message-form").onsubmit = function(e) {   // Код срабатывает в момент отправки формы 
-      e.preventDefault(); // отменяет перезагрузку странци при отправке формы 
-      const input = document.getElementById("chat-message-input");  // находит поле ввода сообщения 
-      const message = input.value.trim(); // Берёт текст из поля и убирает пробелы в начале и конце
-      if (!message) return; // Если сообщение пустое — ничего не отправляем и выходим из функции
-      chatSocket.send(JSON.stringify({ message })); // Отправляет сообщение через WebSocket серверу в формате JSON
-      input.value = ""// Очищает поле ввода после отправки сообщения
-    }; 
-  </script>
+  document.getElementById("chat-message-form").onsubmit = function(e) {   // Код срабатывает в момент отправки формы 
+    e.preventDefault(); // отменяет перезагрузку страницы при отправке формы 
+
+    const input = document.getElementById("chat-message-input");  // находит поле ввода сообщения 
+    const message = input.value.trim(); // берёт текст из поля и убирает пробелы в начале и конце
+
+
+    const input_media = document.getElementById("upload_media"); // находит поле медиа-файла
+    const media_file = input_media.files[0];
+    const reader = new FileReader();
+    if (!message && !media_file) return;// если сообщение пустое — ничего не отправляем и выходим из функции
+
+    if (media_file) {
+      reader.onload = function() {
+        const base64data = reader.result; // файл в base64
+
+        // Отправляем сообщение и файл по WebSocket
+        chatSocket.send(JSON.stringify({
+          message: message,
+          media_file: base64data
+        }));
+
+        // Очищаем поля
+        input.value = "";
+        input_media.value = "";
+      };
+
+      reader.readAsDataURL(media_file); // начинаем читать файл в base64
+    } else {
+      // Если файл не выбран — отправляем только сообщение
+      chatSocket.send(JSON.stringify({
+        message: message,
+        media_file: null
+      }));
+
+      // Очищаем поле ввода после отправки сообщения
+      input.value = "";
+    }
+  };
+</script>
+
 
 <script>
 // Скрипт для прокуртки вниз после открытия дилаог
