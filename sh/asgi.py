@@ -14,7 +14,10 @@ from django.core.asgi import get_asgi_application
 from channels.auth import AuthMiddlewareStack
 from channels.routing import URLRouter
 
-from user_messages.routing import ws_urlpatterns
+from user_messages.routing import ws_urlpatterns as ws_messages
+from notifications.routing import ws_urlpatterns as ws_notifiacations
+
+ws_urlpatterns = ws_messages+ws_notifiacations
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sh.settings')
 

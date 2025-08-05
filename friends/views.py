@@ -20,7 +20,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Case
 from django.db.models import When
 from django.db.models import F
-from django.db.models import IntegerField  
+from django.db.models import IntegerField
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync  
 
 from notifications.models import Notifications
 from users.models import User
@@ -57,8 +59,16 @@ class AddFriend(LoginRequiredMixin, View):
             Notifications.objects.create(type = 'pending', user=receiver,)
         else:
             return JsonResponse({'status': 'ok'})
-            
 
+        channel_layer = get_channel_layer()    
+        async_to_sync(channel_layer.group_send)(
+        f"user_{receiver.id}",  # группа пользователя
+        {
+            "type": "notify_friend_add",  
+            "message": f"Вас хочет добавить в друзья пользователь {sender.last_name} {sender.first_name}",
+            "sender_id": sender.id
+        }
+    )
         return JsonResponse({'status': 'ok'})
 
 

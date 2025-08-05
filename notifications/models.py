@@ -5,7 +5,7 @@ from users.models import User
 class Notifications(models.Model):
     
     TYPE_CHOISES = [
-        ('publications','Публикация'),
+        ('message_response','Сообщение'),
         ('friend_request','Запрос в друзья'),
         ('friend_response','Ответ о дружбе '),
     ]

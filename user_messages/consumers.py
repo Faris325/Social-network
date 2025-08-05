@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
 from .models import Messages
 
+
 import base64
 import uuid
 from django.core.files.base import ContentFile
@@ -30,7 +31,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
         await self.channel_layer.group_discard(self.room_name, self.channel_name)
 
     async def receive(self, text_data):    # Этот метод вызывается, когда клиент отправляет данные по веб соккету 
-        data = json.loads(text_data) # Превращение байтовой js строки в словарь 
+        data = json.loads(text_data) # Превращение js строки в словарь 
         message_text = data.get("message") # Извлечение значения текста из словаря
         media_file = data.get("media_file") # Извлечение файла из словаря 
 
