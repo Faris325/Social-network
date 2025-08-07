@@ -56,6 +56,17 @@ class ChatConsumer(AsyncWebsocketConsumer):
             }
         )
 
+        # Отправка уведомления веб-сокету уведомлений
+        await self.channel_layer.group_send(
+            f"user_{recipient.id}",  # группа пользователя,
+            {
+                "type": "notify_message",  
+                "message": "Вам написал сообщение пользователь:",
+                "image_url": self.user.image.url if self.user.image else None,
+                "sender_id": self.user.id,
+                "user_name": f"{self.user.first_name} {self.user.last_name}"
+            })
+
     async def chat_message(self, event):
         # Отправляем сообщение на WebSocket
         await self.send(text_data=json.dumps({

@@ -65,8 +65,9 @@ class AddFriend(LoginRequiredMixin, View):
         f"user_{receiver.id}",  # группа пользователя
         {
             "type": "notify_friend_add",  
-            "message": f"Вас хочет добавить в друзья пользователь {sender.last_name} {sender.first_name}",
-            "sender_id": sender.id
+            "message": "Вас хочет добавить в друзья пользователь: ",
+            "sender_id": sender.id,
+            "user_name":f"{sender.first_name} {sender.last_name}"
         }
     )
         return JsonResponse({'status': 'ok'})
@@ -142,6 +143,16 @@ class FriendAccept(LoginRequiredMixin, View):
                 application_status = 'pending')|
                 Q(sender=receiver, receiver = sender, 
                 application_status = 'pending')).delete()
+            
+            channel_layer = get_channel_layer()    
+            async_to_sync(channel_layer.group_send)(
+            f"user_{sender.id}",  # группа пользователя
+            {
+                "type": "notify_friend_accept",  
+                "message": "Вашу заявку в друзья принял пользователь:",
+                "sender_id": receiver.id,
+                "user_name": f"{receiver.first_name} {receiver.first_name}"
+            })
          
             return JsonResponse({'status': 'ok'})
 

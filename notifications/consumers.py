@@ -5,6 +5,7 @@ from channels.generic.websocket import AsyncWebsocketConsumer
 class NotificationsConsumer(AsyncWebsocketConsumer):
      
      
+     
      async def connect(self):
         self.user = self.scope["user"] # Текущий пользователь
 
@@ -26,5 +27,24 @@ class NotificationsConsumer(AsyncWebsocketConsumer):
             "message": event["message"],
             "type":event["type"],
             "sender_id": event["sender_id"],
+            "user_name":event["user_name"]
+        }))
+    
+     async def notify_friend_accept(self, event):
+        # Отправляем сообщение на WebSocket
+        await self.send(text_data=json.dumps({
+            "message": event["message"],
+            "type":event["type"],
+            "sender_id": event["sender_id"],
+            "user_name":event["user_name"]
         }))
 
+     async def notify_message(self, event):
+        # Отправляем сообщение на WebSocket
+        await self.send(text_data=json.dumps({
+            "message": event["message"],
+            "type":event["type"],
+            "sender_id": event["sender_id"],
+            "image_url":event["image_url"],
+            "user_name":event["user_name"]
+        }))
