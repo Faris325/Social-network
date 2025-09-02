@@ -10,4 +10,4 @@ class Messages(models.Model):
     media = models.FileField(
         upload_to = 'publications_messages', blank=True, 
         null = True )
-
+    

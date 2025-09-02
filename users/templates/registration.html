@@ -17,28 +17,28 @@
                     {% csrf_token%}
                     <div class="mb-3">
                         <label for="InputName" class="form-label">Введите ваше имя</label>
-                        <input type="text" class="form-control" id = "InputName", name = "first_name", required,>
+                        <input type="text" class="form-control" id = "InputName" name = "first_name" required {% if form.errors %}value = {{form.first_name.value}}{% endif %}>
                         {% if form.first_name.errors %}
                             <div class="alert alert-danger alert-dismissible fade show">{{form.first_name.errors}}</div>
                         {% endif %}
                     </div>
                     <div class="mb-3">
                         <label for="LastName" class="form-label">Введите вашу Фамилию</label>
-                        <input type="text" class="form-control" id = "LastName", name = "last_name", required, >
+                        <input type="text" class="form-control" id = "LastName" name = "last_name" required {% if form.errors %}value = {{form.last_name.value}}{% endif %}>
                         {% if form.last_name.errors %}
                             <div class="alert alert-danger alert-dismissible fade show">{{form.last_name.errors}}</div>
                         {% endif %}
                     </div>      
                 <div class="mb-3">
                     <label for="InputNumber" class="form-label">Введите номер телефона</label>
-                    <input type="tel" class="form-control" id="InputNumber", name = "phone_number" required,>
+                    <input type="tel" class="form-control" id="InputNumber" name = "phone_number" required {% if form.errors %}value = {{form.phone_number.value}}{% endif %}>
                     {% if form.phone_number.errors %}
                         <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
                     {% endif %}
                 </div>
                 <div class="mb-3">
                     <label for="InputEmail1" class="form-label">Введите вашу почту</label>
-                    <input type="email" class="form-control" id="InputEmail1", name = "email", required, >
+                    <input type="email" class="form-control" id="InputEmail1", name = "email" required {% if form.errors %}value = {{form.email.value}}{% endif %}>
                     {% if form.email.errors %}
                         <div class="alert alert-danger alert-dismissible fade show">{{ form.email.errors }}</div>
                     {% endif %}
@@ -46,7 +46,7 @@
                 </div>
                 <div class="mb-3">
                     <label for="exampleInputPassword1" class="form-label">Придумайте пароль</label>
-                    <input type="password" class="form-control" id="exampleInputPassword1", name = "password1" required,>
+                    <input type="password" class="form-control" id="exampleInputPassword1" name = "password1" required>
                     {% if form.password1.errors %}
                         <div class="alert alert-danger alert-dismissible fade show">{{ form.password1.errors }}</div>
                     {% endif %}
