@@ -32,6 +32,7 @@
                         <a href="{% url "friends:friend-profile" user.id %}">
                             <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
                         </a>
+                        
                         <div class="friend_add">
                             {% if user.id not in sent_friends and user.id not in add_friends %}
                                 <input type="hidden" name="receiver" value="{{ user.id }}">
@@ -48,6 +49,10 @@
                                     {% endif %}
                                 </span>
                             {% endif %}
+                        <form action="{% url 'user_messages:messages' user.id %}" method="post">
+                            {% csrf_token %}
+                            <button class="btn btn-outline-dark btn-sm rounded-pill px-3">Написать</button>
+                        </form>
                         </div>
                     </div>
                 </div>
