@@ -9,7 +9,12 @@ from django.shortcuts import render
 from django.db.models import Q
 from django.views.generic import View
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db.models import Case
+from django.db.models import When
+from django.db.models import F
+from django.db.models import Value
 
+import user_messages
 from user_messages.models import Messages
 from django.views.generic import CreateView
 from user_messages.forms import MessageForm
@@ -22,16 +27,22 @@ class UserMessagesView(LoginRequiredMixin, View):
     def get(self,request):
         """Возвращает шаблон с пользователями с которыми диалог у текущего 
            пользователя"""
-        users_messages = Messages.objects.filter(
-            Q(sender=request.user)|Q(recipient=request.user)
-            ).select_related('sender','recipient').order_by('-timestamp')
+        dialog_users = (
+            Messages.objects.filter(
+            Q(sender=request.user)|Q(recipient=request.user))
+            .select_related('sender','recipient')
+            .order_by('-timestamp')
+            .annotate(
+            friend = Case(
+                When(sender=request.user, then=F("recipient")),
+                When(recipient=request.user, then=F("sender")),
+                default=Value(None) 
+            ))
+            .values_list("friend",flat=True)
+            )
+        
 
-        users = [] 
-        for user_message in users_messages:
-            if user_message.sender not in users:
-                users.append(user_message.sender)
-            if user_message.recipient not in users:
-                users.append(user_message.recipient)
+        users = User.objects.filter(id__in=dialog_users)
 
         context = {
             'users':users 
@@ -53,23 +64,35 @@ class UserMessageView(LoginRequiredMixin, CreateView):
       def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        users_messages = Messages.objects.filter(
-            Q(sender=self.request.user)|Q(recipient=self.request.user)
-            ).select_related('sender','recipient').order_by('-timestamp')
+        dialogs = (Messages.objects.filter(
+            Q(sender=self.request.user)|Q(recipient=self.request.user))
+            .select_related('sender','recipient')
+            .order_by('-timestamp')
+            )
+        
+        dialog_users = (dialogs.annotate(
+            friend = Case(
+                When(sender=self.request.user, then=F("recipient")),
+                When(recipient=self.request.user, then=F("sender")),
+                default=Value(None) 
+            ))
+            .values_list("friend",flat=True)
+            )
+        users = User.objects.filter(id__in=dialog_users)
 
-        users = [] 
-        for user_message in users_messages:
-            if user_message.sender not in users:
-                users.append(user_message.sender)
-            if user_message.recipient not in users:
-                users.append(user_message.recipient)
 
-        personal_messages = users_messages.filter(
+        personal_messages = (dialogs.filter(
             Q(sender = self.kwargs['user_id'], recipient = self.request.user)|
-            Q(sender = self.request.user, recipient = self.kwargs['user_id'])).order_by('timestamp')
+            Q(sender = self.request.user, recipient = self.kwargs['user_id']))
+            .order_by('timestamp')
+            )
+        
+        otladka = personal_messages.values()
+        for msg in otladka:
+            print(msg)
 
         context['users'] = users
-        context['chat_user'] = True # Активирует icnlude 
+        context['chat_user'] = True # Активирует icnlude с сообщениями
         context['personal_messages'] = personal_messages
         context['dialog_user'] = User.objects.get(id = self.kwargs['user_id']) # Будет ли ошибка если пользователь удалится? 
         return context
