@@ -49,7 +49,7 @@
                                     {% endif %}
                                 </span>
                             {% endif %}
-                        <form action="{% url 'user_messages:messages' user.id %}" method="post">
+                        <form action="{% url 'user_messages:messages' user.id %}" method="get">
                             {% csrf_token %}
                             <button class="btn btn-outline-dark btn-sm rounded-pill px-3">Написать</button>
                         </form>

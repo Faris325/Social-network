@@ -44,7 +44,7 @@
                                     {%endtimezone%}
                                 </div>
                                 <div class="card-footer bg-white border-0 d-flex justify-content-between px-3 pb-3">
-                                    <form action="{% url 'user_messages:messages' friend.id %}" method="post">
+                                    <form action="{% url 'user_messages:messages' friend.id %}" method="get">
                                         {% csrf_token %}
                                         <button class="btn btn-outline-dark btn-sm rounded-pill px-3">Написать</button>
                                     </form>
