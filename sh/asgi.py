@@ -16,8 +16,9 @@ from channels.routing import URLRouter
 
 from user_messages.routing import ws_urlpatterns as ws_messages
 from notifications.routing import ws_urlpatterns as ws_notifiacations
+from friends.routing import ws_urlpatterns as ws_incomming_friends
 
-ws_urlpatterns = ws_messages+ws_notifiacations
+ws_urlpatterns = ws_messages+ws_notifiacations+ws_incomming_friends
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sh.settings')
 

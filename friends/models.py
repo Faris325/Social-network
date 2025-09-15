@@ -1,4 +1,3 @@
-from email.mime import application
 from django.db import models
 from users.models import User
 

@@ -87,9 +87,6 @@ class UserMessageView(LoginRequiredMixin, CreateView):
             .order_by('timestamp')
             )
         
-        otladka = personal_messages.values()
-        for msg in otladka:
-            print(msg)
 
         context['users'] = users
         context['chat_user'] = True # Активирует icnlude с сообщениями

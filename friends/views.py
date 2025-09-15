@@ -69,7 +69,17 @@ class AddFriend(LoginRequiredMixin, View):
             "sender_id": sender.id,
             "user_name":f"{sender.first_name} {sender.last_name}"
         }
-    )
+        )
+
+        async_to_sync(channel_layer.group_send)(    
+        f"incoming_friends_{receiver.id}",  # группа пользователя
+        {
+            "type": "incomming_friends",  
+            "image":sender.image.url if sender.image else None,
+            "sender_id": sender.id,
+            "user_name":f"{sender.first_name} {sender.last_name}"
+        }
+        )
         return JsonResponse({'status': 'ok'})
 
 
