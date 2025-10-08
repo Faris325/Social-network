@@ -82,6 +82,8 @@
 
     chatLog.appendChild(msgElement); // добавляет внутрь chatLog новый элемент, который был создан выше
     chatLog.scrollTop = chatLog.scrollHeight; // прокручивает список сообщений вниз
+
+    document.querySelector('.no-messages').remove()
   };
 
   document.getElementById("chat-message-form").onsubmit = function(e) {   // Код срабатывает в момент отправки формы 

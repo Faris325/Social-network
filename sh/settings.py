@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'daphne',
     'django.contrib.staticfiles',
     
-    "debug_toolbar",
+    # "debug_toolbar",
     'channels',
 
     'users',
@@ -61,7 +61,7 @@ MIDDLEWARE = [
 
     'users.middleware.update_last_seen_middleware',
 
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
+    # "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'sh.urls'
@@ -94,7 +94,7 @@ DATABASES = {
         'NAME':'sh',
         'USER':'postgres',
         'PASSWORD':'1234',
-        'HOST':'localhost',
+        'HOST':'db',
         'PORT':'5432',
                    
     }
@@ -131,12 +131,21 @@ USE_I18N = True
 
 USE_TZ = True
 
+# Домены для обращения к приложению (web- обращение nginx)
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web', 'домен_сайта'] 
+
+# список доменов, с которых джанго разрешает post-запросы c csrf-токеном
+CSRF_TRUSTED_ORIGINS = [
+    'http://localhost',
+    'http://127.0.0.1',
+    'http://yourdomain.com' # доменное имя
+]
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-
+STATIC_URL = '/static/'
+STATIC_ROOT = BASE_DIR / 'staticfiles'  # сюда добавится статика 
 STATICFILES_DIRS = [BASE_DIR / 'static']
 
 INTERNAL_IPS = [ # это для Django Debug Toolbar
@@ -154,15 +163,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-#InMemoryChannelLayer — это встроенный слой для разработки (не для продакшена). Он позволяет Channels работать без внешнего брокера, как Redis.
 
-#Теперь у тебя будет не None в self.channel_layer и ошибка NoneType пропадёт.
 
 CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [("redis", 6379)], 
         },
     },
 }

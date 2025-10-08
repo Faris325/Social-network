@@ -2,7 +2,6 @@ import json
 from channels.generic.websocket import AsyncWebsocketConsumer
 from django.contrib.auth import get_user_model
 from channels.db import database_sync_to_async
-from .models import Messages
 
 
 import base64
@@ -10,11 +9,11 @@ import uuid
 from django.core.files.base import ContentFile
 
 
-User = get_user_model()
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
         self.user = self.scope["user"] # Текущий пользователь
+        
 
         # Приводим user_id из URL к int
         self.other_user_id = int(self.scope['url_route']['kwargs']['user_id']) # Извлечение из url user_id 
@@ -83,6 +82,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     @database_sync_to_async
     def get_user(self, user_id):
+
+        User = get_user_model()
+
         return User.objects.get(id=user_id)
 
     @database_sync_to_async
@@ -93,6 +95,9 @@ class ChatConsumer(AsyncWebsocketConsumer):
             ext = format.split('/')[-1]
             file_name = f"{uuid.uuid4()}.{ext}"
             media_file = ContentFile(base64.b64decode(imgstr), name=file_name)
+
+        from user_messages.models import Messages
+
         return Messages.objects.create(
             sender=sender,
             recipient=recipient,
