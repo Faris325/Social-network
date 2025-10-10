@@ -94,7 +94,7 @@ DATABASES = {
         'NAME':'sh',
         'USER':'postgres',
         'PASSWORD':'1234',
-        'HOST':'db',
+        'HOST':'localhost',
         'PORT':'5432',
                    
     }
@@ -169,7 +169,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis", 6379)], 
+            "hosts": [("127.0.0.1", 6379)], 
         },
     },
 }
