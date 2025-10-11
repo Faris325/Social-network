@@ -21,7 +21,7 @@
                 <div class="card mb-3">
                     {% if user.image %}
                         <a href="{% url "friends:friend-profile" user.id %}">
-                            <img src="{{ user.image.url }}" class="card-img-top" alt="{{ user.first_name }}">
+                            <img src="{{ user.image.url }}" class="card-img-top" alt="{{ user.nickname}}">
                         </a>
                     {% else %}
                         <a href="{% url "friends:friend-profile" user.id %}">
@@ -30,7 +30,7 @@
                     {% endif %}
                     <div class="card-body">
                         <a href="{% url "friends:friend-profile" user.id %}">
-                            <h5 class="card-title">{{ user.first_name }} {{ user.last_name }}</h5>
+                            <h5 class="card-title">{{ user.nickname}}</h5>
                         </a>
                         
                         <div class="friend_add">

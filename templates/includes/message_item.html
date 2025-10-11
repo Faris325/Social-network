@@ -4,7 +4,7 @@
   <div class="chat-header">
     {% if user != dialog_user %}
       <a href="{% url "friends:friend-profile" dialog_user.id%}">
-        {{ dialog_user.first_name }} {{ dialog_user.last_name }}
+        {{ dialog_user.nickname }}
       </a>
       {% if  dialog_user.image %}
         <a href="{% url "friends:friend-profile" dialog_user.id%}">

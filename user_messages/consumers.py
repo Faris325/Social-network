@@ -63,7 +63,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 "message": "Вам написал сообщение пользователь:",
                 "image_url": self.user.image.url if self.user.image else None,
                 "sender_id": self.user.id,
-                "user_name": f"{self.user.first_name} {self.user.last_name}"
+                "user_name": f"{self.user.nickname}"
             })
 
     async def chat_message(self, event):

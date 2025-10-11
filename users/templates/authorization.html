@@ -1,85 +1,49 @@
+{% extends "reg_base.html" %}
+
 {% load static %}
 
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Thredly - Авторизация</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="icon" type="image/x-icon" href="{% static 'image/icon.png' %}">
-    <link rel="stylesheet" href="{% static "css/authorization.css" %}">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
-</head>
-<body>
-  <div class="auth-container">
-    <div class="left-side">
-      <img class = "logo" src="{% static 'image/sitelogo.png' %}" alt="Thredly Logo">
-      <div class="form-container">
-        <h1>Авторизация</h1>
-        <form action = {% url "users:login"%} method = 'post'>
-          {% csrf_token%} 
-          <div class="form-group">
-            <label for="phone">Номер телефона</label>
-            <input type="tel" id="phone" name = 'phone_number' >
-            {% if form.phone_number.errors %}
-              <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
-            {% endif %}
-          </div>
-          
-          <div class="form-group">
-            <label class = 'input-title' for="password">Пароль</label>
-            <input type="password" id="password" name = 'password'>
-             {% if form.password.errors %}
-                  <div class="alert alert-danger alert-dismissible fade show">{{form.password.errors}}</div>
-             {% endif %}
-          </div>
-          {% if form.errors %}
-              {% for error in form.non_field_errors %}
-                  <div class="alert alert-danger alert-dismissible fade show">{{error}}</div>
-              {% endfor %}
-          {% endif %}
-          <div class="checkbox-group">
-            <label>
-              <input type="checkbox" id="remember"> Запомнить меня
-            </label>
-            <a href="#">Забыли пароль?</a>
-          </div>
-          <button type="submit" class="login-button">Войти</button>
-          <input type="hidden" name="timezone" id="id_timezone"> 
-        </form>
-        
-        <div class="signup-link">
-          <span>Нет аккаунта? </span>
-          <a href="{% url "users:register" %}">Создать аккаунт</a>
-        </div>
-      </div>
-    </div>
-    <div class="right-side">
-      <h2>Информация о платформе</h2>
-        <div class="border-section"> 
-        <div>
-          <p>
-            <strong>Thredly</strong> — это пространство для анонимного и свободного общения. Здесь вы можете общаться лично с другими пользователями, добавлять их в друзья и обсуждать различные темы, не раскрывая свою личность.
-          </p>
-          
-          <p>
-            Каждый раздел имеет чётко определённую тематику, а правила помогают поддерживать порядок и уважение между участниками. Всё, что не нарушает правила раздела и соответствует его теме, здесь разрешено.
-          </p>
-        </div>
-      </div>
-      <div class="border-section-up">
-        <p>
-          Входя на сайт, вы соглашаетесь соблюдать правила сообщества и поддерживать уважительное общение.
-        </p>
-      </div>
-    </div>
-  </div>
+{% block css %}
+<link rel="stylesheet" href="{% static "css/authorization.css" %}">
+{% endblock css %}
 
-<script>
-    document.getElementById('id_timezone').value = Intl.DateTimeFormat().resolvedOptions().timeZone;
-</script>
-</body>
-</html>
+{% block form_container %}
+<div class="form-container">
+<h1>Авторизация</h1>
+<form action = {% url "users:login"%} method = 'post'>
+  {% csrf_token%} 
+  <div class="form-group">
+    <label for="phone">Номер телефона</label>
+    <input type="tel" id="phone" name = 'phone_number' >
+    {% if form.phone_number.errors %}
+      <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
+    {% endif %}
+  </div>
+  
+  <div class="form-group">
+    <label for="password">Пароль</label>
+    <input type="password" id="password" name = 'password'>
+      {% if form.password.errors %}
+          <div class="alert alert-danger alert-dismissible fade show">{{form.password.errors}}</div>
+      {% endif %}
+  </div>
+  {% if form.errors %}
+      {% for error in form.non_field_errors %}
+          <div class="alert alert-danger alert-dismissible fade show">{{error}}</div>
+      {% endfor %}
+  {% endif %}
+  <div class="checkbox-group">
+    <label>
+      <input type="checkbox" id="remember"> Запомнить меня
+    </label>
+    <a href="#">Забыли пароль?</a>
+  </div>
+  <button type="submit" class="login-button">Войти</button>
+  <input type="hidden" name="timezone" id="id_timezone"> 
+</form>
+
+  <div class="signup-link">
+    <span>Нет аккаунта? </span>
+    <a href="{% url "users:register" %}">Создать аккаунт</a>
+  </div>
+</div>
+{% endblock form_container %}

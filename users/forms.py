@@ -32,13 +32,10 @@ class UserRegisterForm(UserCreationForm):
 
     """
 
-    email = forms.CharField(required=False)
     class Meta:
         model = User
         fields = [
-            'first_name', 'last_name', 
-            'phone_number','email'
-
+            'nickname', 'phone_number',
             ]  
         error_messages = {
             'phone_number': {
@@ -48,21 +45,11 @@ class UserRegisterForm(UserCreationForm):
                 'unique': 'Пользователь с таким номером телефона уже '
                 'существует.',
             },
-            'first_name':{
+            'nickname':{
                 'max_length': 'Имя не должно превышать 150 символов.',
                 'min_length': 'Имя не должно быть меньше 3 символов.',
                 'required': 'Это поле обязательно для заполнения',
 
-            },
-            'last_name' : {
-                'max_length': 'Фамилия не должна превышать 150 символов.',
-                'min_length': 'Фамилия не должна быть меньше 3 символов.',
-                'required': 'Это поле обязательно для заполнения',
-            },
-            'email': {
-                'max_length': 'Email не должен превышать 150 символов.',
-                'required': 'Это поле обязательно для заполнения',
-                'min_length': 'Email не должен быть меньше 3 символов.',
             },
 
         }
@@ -79,15 +66,13 @@ class ProfileChangeForm(forms.ModelForm):
        в модели при вызове save().
 
     """
-    last_name = forms.CharField(max_length=150, required=False)
-    first_name = forms.CharField(max_length=150, required=False)
+    nickname = forms.CharField(max_length=150, required=False)
     phone_number = forms.CharField(max_length=15, required=False)
-    email = forms.CharField(max_length=15, required=False)
     class Meta:
         model = User
         fields = [
-            'last_name', 'first_name', 'phone_number',
-            'email', 'image',
+            'nickname', 'phone_number',
+            'image',
             ]
 
     def clean(self):
@@ -106,19 +91,13 @@ class ProfileChangeForm(forms.ModelForm):
         user = self.instance
         
         # Если поле пустое, оставляем старое значение
-        cleaned_data['first_name'] = (cleaned_data.get('first_name') 
-                                      or user.first_name
+        cleaned_data['nickname'] = (cleaned_data.get('nickname') 
+                                      or user.nickname
                                       )
-        cleaned_data['last_name'] = (cleaned_data.get('last_name') 
-                                     or user.last_name
-                                     )
+
         cleaned_data['phone_number'] = (cleaned_data.get('phone_number') 
                                         or user.phone_number
                                         )
-        cleaned_data['email'] = (cleaned_data.get('email') 
-                                 or user.email
-                                 )
-        
         # Объединение email и emailProvider
         # email_provider = cleaned_data.get('emailProvider')
         # if cleaned_data['email'] and email_provider:

@@ -271,10 +271,9 @@ class Users(LoginRequiredMixin, ListView):
             q = q.strip()
 
             search_query = User.objects.annotate(
-                search = SearchVector("first_name", "last_name")).filter(Q(
+                search = SearchVector("nickname",)).filter(Q(
                     search=SearchQuery(q))|
-                    Q(first_name__icontains = q)|
-                    Q(last_name__icontains = q)
+                    Q(nickname__icontains = q)
                     ).exclude(id=self.request.user.id)
                     
 

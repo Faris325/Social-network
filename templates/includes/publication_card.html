@@ -12,7 +12,7 @@
                 <img class = "round-image" src="{% static "image/profile_image/profile.webp" %}" alt="фото">
               </a>
             {% endif %}
-            <span>{{ publication.user.first_name }} {{ publication.user.last_name }}: {{ publication.created_at }}</span>
+            <span>{{ publication.user.nickname}}: {{ publication.created_at }}</span>
             {% if user == publication.user %}
               <button data-id="{{publication.id}}" class="delete-publication"><img src="{% static "image/delete.png" %}" alt="Удалить"></button>
             {% endif %}

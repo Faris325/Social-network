@@ -60,7 +60,7 @@
   .form-group label {
     display: block;
     font-size: 16px;
-    font-weight: 500;
+
     margin-bottom: 8px;
   }
 
@@ -71,6 +71,7 @@
     border-radius: 6px;
     font-size: 16px;
     transition: all 0.2s ease;
+    height: 50px;
   }
 
   .form-group input:focus {

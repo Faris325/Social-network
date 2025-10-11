@@ -27,6 +27,7 @@ urlpatterns = [
     path('', include('friends.urls', namespace='friends')),
     path('', include('publications.urls', namespace='publications')),
     path('', include('user_messages.urls', namespace='user_messages'))
+    
 ]
 
 if settings.DEBUG:

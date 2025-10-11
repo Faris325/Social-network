@@ -67,7 +67,7 @@ class AddFriend(LoginRequiredMixin, View):
             "type": "notify_friend_add",  
             "message": "Вас хочет добавить в друзья пользователь: ",
             "sender_id": sender.id,
-            "user_name":f"{sender.first_name} {sender.last_name}"
+            "user_name":f"{sender.nickname}"
         }
         )
 
@@ -77,7 +77,7 @@ class AddFriend(LoginRequiredMixin, View):
             "type": "incomming_friends",  
             "image":sender.image.url if sender.image else None,
             "sender_id": sender.id,
-            "user_name":f"{sender.first_name} {sender.last_name}"
+            "user_name":f"{sender.nickname}"
         }
         )
         return JsonResponse({'status': 'ok'})
@@ -161,7 +161,7 @@ class FriendAccept(LoginRequiredMixin, View):
                 "type": "notify_friend_accept",  
                 "message": "Вашу заявку в друзья принял пользователь:",
                 "sender_id": receiver.id,
-                "user_name": f"{receiver.first_name} {receiver.first_name}"
+                "user_name": f"{receiver.nickname}"
             })
          
             return JsonResponse({'status': 'ok'})

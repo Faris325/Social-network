@@ -27,12 +27,12 @@
 
     <section class="profile-details">
         {% if is_friend_profile %}
-            <h1 class="profile-name">{{ friend.first_name }} {{ friend.last_name }}</h1>
+            <h1 class="profile-name">{{ friend.nickname }}</h1>
             {% timezone user.time_zone %}
                 <p class="last-seen">Был(а) в сети: {{ friend.last_seen|date:"d.m.Y H:i" }}</p>
             {% endtimezone %}
         {% else %}
-            <h1 class="profile-name">{{ user.first_name }} {{ user.last_name }}</h1>
+            <h1 class="profile-name">{{ user.nickname }}</h1>
             {% timezone user.time_zone %}
                 <p class="last-seen">Был(а) в сети: {{ user.last_seen|date:"d.m.Y H:i" }}</p>
             {% endtimezone %}

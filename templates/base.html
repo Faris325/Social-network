@@ -91,40 +91,17 @@
                     <div class="row g-3">
                       <div class="col-md-6">
                         <label for="inputFirstName" class="form-label">Изменить имя</label>
-                        <input type="text" class="form-control" id="inputFirstName" name = 'first_name'>
-                        {% if form.first_name.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{form.first_name.errors}}</div>
+                        <input type="text" class="form-control" id="inputFirstName" name = 'nickname'>
+                        {% if form.nickname.errors %}
+                          <div class="alert alert-danger alert-dismissible fade show">{{form.nickname.errors}}</div>
                         {% endif %}
                       </div>
-                      <div class="col-md-6">
-                        <label for="inputLastName" class="form-label">Изменить фамилию</label>
-                        <input type="text" class="form-control" id="inputLastName" name = 'last_name'>
-                        {% if form.last_name.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{form.last_name.errors}}</div>
-                        {% endif %}
-                      </div>
-                      <div class="col-md-3">
-                        <label for="inputEmail" class="form-label">Почта</label>
-                        <input type="text" class="form-control" id="inputEmail" name = 'email' >
-                      {% if form.email.errors %}
-                        <div class="alert alert-danger alert-dismissible fade show">{{form.email.errors}}</div>
-                      {% endif %}
-                      </div>
-                      <div class="col-md-3">
-                        <label for="emailProvider" class="form-label">Почтовый сервис</label>
-                        <select class="form-select" id="emailProvider" name="emailProvider">
-                            <option value="@gmail.com">@gmail.com</option>
-                            <option value="@yahoo.com">@yahoo.com</option>
-                            <option value="@mail.ru">@mail.ru</option>
-                            <option value="@yandex.ru">@yandex.ru</option>
-                            <option value="@outlook.com">@outlook.com</option>
-                        </select>
-                    </div> 
+  
                       <div class="col-md-6">
                         <label for="inputPhoneNumber" class="form-label">Новый номер телефона</label>
                         <input type="tel" class="form-control" id="inputPhoneNumber" name = 'phone_number'>
-                        {% if form.last_name.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{form.last_name.errors}}</div>
+                        {% if form.phone_number.errors %}
+                          <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
                         {% endif %}
                       </div>
                       <div class="col-md-6">
