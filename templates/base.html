@@ -2,219 +2,252 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="csrf-token" content="{{ csrf_token }}">
-    <title>{{title}}</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/base_html.css' %}">
-    {% block css %}{% endblock css %}
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="csrf-token" content="{{ csrf_token }}">
+  <title>{{ title }}</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'css/base_html.css' %}">
+  {% block css %}{% endblock css %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
-  <header>
-    <nav class="navbar navbar-expand-lg bg-body-tertiary">
-        <div class="container-fluid">
-          {% comment %} Если пользователь находится на профиле, то будут 
-          отображаться "настройки аккаунта" {% endcomment %}
-          {% url "users:profile" as profile_url %}
-          {% url "users:password" as profile_password %}
-          {% if request.path == profile_url%}
-          <div class="dropdown me-3">
-          <button class="btn btn-outline-dark dropdown-toggle" type="button" id="settingsDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-            Настройки аккаунта
-          </button>
-            <ul class="dropdown-menu" aria-labelledby="settingsDropdown">
-              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal2">Изменить данные</a></li>
-              <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#exampleModal">Изменить пароль</a></li>
-            </ul>
-         </div>
-          <!-- Модальное окно -->
-          <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered ">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Настройка профиля</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <div class="modal-body">
-                  <div class="row g-3">
-                    <form action="{% url "users:password" %}" method = 'post'>
-                      {% csrf_token %}
-                      <div class="col-md-12">
-                        <label for="inputOldPassword" class="form-label">Текущий пароль</label>
-                        <input type="password" class="form-control" id="inputOldPassword" name = "old_password" required>
-                        {% if form.old_password.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{ form.old_password.errors }}</div>
-                        {% endif %}
-                      </div>
-                      <div class="col-md-12">
-                        <label for="inputPassword1" class="form-label">Новый пароль</label>
-                        <input type="password" class="form-control" id="inputPassword1" name = "new_password1" required>
-                        {% if form.new_password1.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{ form.new_password1.errors }}</div>
-                        {% endif %}
-                      </div>
-                      <div class="col-md-12">
-                        <label for="inputPassword2" class="form-label">Повторите новый пароль</label>
-                        <input type="password" class="form-control" id="inputPassword2" name = "new_password2" required>
-                        {% if form.new_password2.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{form.new_password2.errors}}</div>
-                        {% endif %}
-                      </div>
-                      <div class="col-12 mt-3">
-                        <button type="submit" class="btn btn-dark">Сохранить новый пароль</button>
-                      </div>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% if form.errors %}
-          <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                let myModal = new bootstrap.Modal(document.getElementById("exampleModal")); 
-                myModal.show(); // Открывает модальное окно при загрузке страницы, когда ошибки
-            });
-          </script>
-            {% endif %}
-          <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered 	modal-lg">
-              <div class="modal-content">
-                <div class="modal-header">
-                  <h1 class="modal-title fs-5" id="exampleModalLabel">Настройка профиля</h1>
-                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
-                </div>
-                <form action="{% url "users:change" %}" method = 'post' enctype="multipart/form-data">
-                  {% csrf_token %}
-                  <div class="modal-body">
-                    <div class="row g-3">
-                      <div class="col-md-6">
-                        <label for="inputFirstName" class="form-label">Изменить имя</label>
-                        <input type="text" class="form-control" id="inputFirstName" name = 'nickname'>
-                        {% if form.nickname.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{form.nickname.errors}}</div>
-                        {% endif %}
-                      </div>
-  
-                      <div class="col-md-6">
-                        <label for="inputPhoneNumber" class="form-label">Новый номер телефона</label>
-                        <input type="tel" class="form-control" id="inputPhoneNumber" name = 'phone_number'>
-                        {% if form.phone_number.errors %}
-                          <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
-                        {% endif %}
-                      </div>
-                      <div class="col-md-6">
-                        <label for="inputImage" class="form-label">Изменить изображение</label>
-                        <input type="file" class="form-control" id="inputImage" name="image" accept="image/*">
-                      </div>
-                      <div class="col-12">
-                        <button type="submit" class="btn btn-dark ">Изменить</button>
-                      </div> 
-                  </form>
-                      <div class="btn-group-toggle" data-toggle="buttons">
-                        <form action = {% url "users:change" %} method = 'post'>
-                          {% csrf_token %}
-                          <button class = 'btn btn-dark' name = "DeleteImage" value = "DeleteImage">Удалить фото</button>
-                        </form>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% if form.errors %}
-          <script>
-            document.addEventListener("DOMContentLoaded", function () {
-                let myModal = new bootstrap.Modal(document.getElementById("exampleModal2")); 
-                myModal.show(); // Открывает модальное окно при загрузке страницы, когда ошибки
-            });
-          </script>
-          {% endif %}
-          {% endif %}
-          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Переключатель навигации">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-              {% if request.path != profile_url%}
-              <li class="nav-item">
-                <a class="nav-link active" href="{% url "users:profile" %}">Профиль</a>
-              </li>
-              {% endif %}
-              <li class="nav-item">
-                <a class="nav-link active" aria-current="page" href="{% url "publications:publication" %}">Публикации</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="{% url "users:search_friends" %}">Пользователи</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="{% url "friends:friends" %}">Мои друзья</a>
-              </li>
-              <li class="nav-item">
-                <a class="nav-link active" href="{% url "user_messages:dialogs" %}">Сообщения</a>
-              </li>
-            </ul>
-            <form action="{% url "users:logout" %}" method = 'post'>
+  <header class="header">
+    <button class="menu-toggle" id="menuToggle">☰</button>
+    <div class="logo"><img src="{% static "image/sitelogo.png" %}" alt=""></div>
+      {% url "users:profile" as profile_url %}
+      {% url "users:password" as profile_password %} 
+      {% if request.path == profile_url or profile_password%}
+
+      <div class="settings">
+        <a href="#" id="settingsToggle">
+          <img src="{% static 'image/settings.png' %}" alt="Настройки" class="nav-icon">
+          Настройки
+        </a>
+        <div class="settings-dropdown" id="settingsDropdown">
+          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+            Настройки профиля
+          </a>
+          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+            Изменить пароль
+          </a>
+        </div>
+      </div>
+      {% endif %}
+  </header>
+  <div class="layout">
+    <nav class="sidebar" id="sidebar">
+      <ul class="menu">
+       <li>
+          <a href="{% url 'users:profile' %}">
+            <img src="{% static 'image/profile-1.png' %}" alt="Профиль" class="nav-icon">
+            Профиль
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'users:search_friends' %}">
+            <img src="{% static 'image/users.png' %}" alt="Пользователи" class="nav-icon">
+            Пользователи
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'publications:publication' %}">
+            <img src="{% static 'image/publications.png' %}" alt="Публикации" class="nav-icon">
+            Публикации
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'friends:friends' %}">
+            <img src="{% static 'image/friends.png' %}" alt="Мои друзья" class="nav-icon">
+            Мои друзья
+          </a>
+        </li>
+        <li>
+          <a href="{% url 'user_messages:dialogs' %}">
+            <img src="{% static 'image/messages.png' %}" alt="Сообщения" class="nav-icon">
+            Сообщения
+          </a>
+        </li>
+      </ul>
+      <hr>
+        <div class="resources">
+          <h4>Ресурсы</h4>
+          <ul>
+            <li>
+              <a href="#">
+                <img src="{% static 'image/logo.png' %}" alt="О сайте" class="nav-icon">
+                О сайте
+              </a>
+            </li>
+            <li>
+              <a href="#">
+                <img src="{% static 'image/rules.png' %}" alt="О сайте" class="nav-icon">
+                Правила
+              </a>
+            </li>
+               <li>
+              <a href="#">
+                <img src="{% static 'image/help.png' %}" alt="О сайте" class="nav-icon">
+                Помощь
+              </a>
+            </li>
+          </ul>
+        </div>
+        <div class="logout"><a href="{% url "users:logout" %}">Выход</a></div>
+    </nav>
+    <main class="content">
+      {% block content %}
+      {% endblock content %}
+    </main>
+  </div>
+
+  <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered ">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Настройка профиля</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <div class="modal-body">
+          <div class="row g-3">
+            <form action="{% url "users:password" %}" method = 'post'>
               {% csrf_token %}
-              <button class="btn btn-dark" type="submit">Выйти</button>
+              <div class="col-md-12">
+                <label for="inputOldPassword" class="form-label">Текущий пароль</label>
+                <input type="password" class="form-control" id="inputOldPassword" name = "old_password" required>
+                {% if form.old_password.errors %}
+                  <div class="alert alert-danger alert-dismissible fade show">{{ form.old_password.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-12">
+                <label for="inputPassword1" class="form-label">Новый пароль</label>
+                <input type="password" class="form-control" id="inputPassword1" name = "new_password1" required>
+                {% if form.new_password1.errors %}
+                  <div class="alert alert-danger alert-dismissible fade show">{{ form.new_password1.errors }}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-12">
+                <label for="inputPassword2" class="form-label">Повторите новый пароль</label>
+                <input type="password" class="form-control" id="inputPassword2" name = "new_password2" required>
+                {% if form.new_password2.errors %}
+                  <div class="alert alert-danger alert-dismissible fade show">{{form.new_password2.errors}}</div>
+                {% endif %}
+              </div>
+              <div class="col-12 mt-3">
+                <button type="submit" class="btn btn-dark">Сохранить новый пароль</button>
+              </div>
             </form>
           </div>
         </div>
-      </nav>
-  </header>
-  {% block content %}
-  {% endblock content %}
-<script>
-const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
-
-const chatSocket = new WebSocket(
-    wsScheme + "://" + window.location.host + `/ws/notification/`
-);
-
-// При получении сообщения WebSocket
-chatSocket.onmessage = function (e) {
-    const data = JSON.parse(e.data);
-    showToast(data.message,data.user_name, data.sender_id, data.image_url);
-};
-
-// Функция для создания и показа тоста
-function showToast(message,user_name, sender, image_url) {
-    const toastContainer = document.getElementById("toastContainer");
-    const url = `/profile/friends/${sender}/`; 
-    const default_image = "{% static 'image/profile_image/profile.webp' %}";
-
-    const final_image_url = image_url ? image_url : default_image;
-
-    const toastElement = document.createElement("div");
-    toastElement.className = "toast align-items-center text-white bg-dark border-0 mb-2";
-    toastElement.innerHTML = `
-      <div class="position-relative p-3" style="font-size: 1.25rem; display: flex; align-items: center;">
-        <img src="${final_image_url}" alt="avatar" class="rounded-circle me-3 flex-shrink-0" width="60" height="60">
-
-        <div class="toast-body flex-grow-1">
-          <div>${message}</div>
-          <a href="${url}" class="text-white text-decoration-none fs-5" style="word-break: break-word;">${user_name}</a>
-        </div>
-
-        <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="toast" aria-label="Закрыть"></button>
       </div>
-    `;
+    </div>
+  </div> 
 
-    toastContainer.appendChild(toastElement);
+  <div class="modal fade" id="exampleModal2" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered 	modal-lg">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Настройка профиля</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+        </div>
+        <form action="{% url "users:change" %}" method = 'post' enctype="multipart/form-data">
+          {% csrf_token %}
+          <div class="modal-body">
+            <div class="row g-3">
+              <div class="col-md-6">
+                <label for="inputFirstName" class="form-label">Изменить имя</label>
+                <input type="text" class="form-control" id="inputFirstName" name = 'nickname'>
+                {% if form.nickname.errors %}
+                  <div class="alert alert-danger alert-dismissible fade show">{{form.nickname.errors}}</div>
+                {% endif %}
+              </div>
 
-    const toast = new bootstrap.Toast(toastElement, { delay: 10000 });
-    toast.show();
+              <div class="col-md-6">
+                <label for="inputPhoneNumber" class="form-label">Новый номер телефона</label>
+                <input type="tel" class="form-control" id="inputPhoneNumber" name = 'phone_number'>
+                {% if form.phone_number.errors %}
+                  <div class="alert alert-danger alert-dismissible fade show">{{form.phone_number.errors}}</div>
+                {% endif %}
+              </div>
+              <div class="col-md-6">
+                <label for="inputImage" class="form-label">Изменить изображение</label>
+                <input type="file" class="form-control" id="inputImage" name="image" accept="image/*">
+              </div>
+              <div class="col-12">
+                <button type="submit" class="btn btn-dark ">Изменить</button>
+              </div> 
+          </form>
+              <div class="btn-group-toggle" data-toggle="buttons">
+                <form action = {% url "users:change" %} method = 'post'>
+                  {% csrf_token %}
+                  <button class = 'btn btn-dark' name = "DeleteImage" value = "DeleteImage">Удалить фото</button>
+                </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div> 
 
-    toastElement.addEventListener("hidden.bs.toast", () => {
-        toastElement.remove(); // Удалить после закрытия
-    });
-}
-</script>
 {% block js %} 
 {% endblock js %}
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastContainer"></div>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.7/dist/umd/popper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+<script src="{% static 'js/base-html.js' %}"></script>
+
+<script>
+  // --- WebSocket для уведомлений ---
+    const wsScheme = window.location.protocol === "https:" ? "wss" : "ws";
+    const chatSocket = new WebSocket(wsScheme + "://" + window.location.host + `/ws/notification/`);
+
+    chatSocket.onmessage = function (e) {
+        const data = JSON.parse(e.data);
+        showToast(data.message, data.user_name, data.sender_id, data.image_url);
+    };
+
+    function showToast(message, user_name, sender, image_url) {
+        const toastContainer = document.getElementById("toastContainer");
+        const url = `/profile/friends/${sender}/`; 
+        const default_image = "{% static 'image/profile_image/profile.webp' %}";
+        const final_image_url = image_url ? image_url : default_image;
+
+        const toastElement = document.createElement("div");
+        toastElement.className = "toast align-items-center text-white bg-dark border-0 mb-2";
+        toastElement.innerHTML = `
+            <div class="position-relative p-3" style="font-size: 1.25rem; display: flex; align-items: center;">
+                <img src="${final_image_url}" alt="avatar" class="rounded-circle me-3 flex-shrink-0" width="60" height="60">
+                <div class="toast-body flex-grow-1">
+                    <div>${message}</div>
+                    <a href="${url}" class="text-white text-decoration-none fs-5" style="word-break: break-word;">${user_name}</a>
+                </div>
+                <button type="button" class="btn-close btn-close-white position-absolute top-0 end-0 m-2" data-bs-dismiss="toast" aria-label="Закрыть"></button>
+            </div>
+        `;
+
+        toastContainer.appendChild(toastElement);
+
+        const toast = new bootstrap.Toast(toastElement, { delay: 10000 });
+        toast.show();
+
+        toastElement.addEventListener("hidden.bs.toast", () => {
+            toastElement.remove();
+        });
+      }
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    {% if form.old_password.errors or form.new_password1.errors or form.new_password2.errors %}
+        new bootstrap.Modal(document.getElementById("exampleModal"), {backdrop: 'static', keyboard: false}).show();
+    {% endif %}
+    {% if form.nickname.errors or form.phone_number.errors or form.image.errors %}
+        new bootstrap.Modal(document.getElementById("exampleModal2"), {backdrop: 'static', keyboard: false}).show();
+    {% endif %}
+});  
+</script>
+
 </body>
 </html>

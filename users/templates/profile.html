@@ -7,7 +7,6 @@
 {% endblock css %}
 
 {% block content %}
-<main class="profile-main">
 <div class="profile-container">
     <div class="profile-header">
         {% if is_friend_profile %}
@@ -76,7 +75,6 @@
         </ul>
     </section>
 </div>
-</main>
 <script>
     const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 

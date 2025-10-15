@@ -1,38 +1,240 @@
-.profile_setup_image{
-    width: 40px;
-    height: auto;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
 }
 
-button {
-    border: none;
-    background: none;
-    padding: 0;
+body {
+  background: #fafafa;
+  color: #222;
+  font-family: 'Roboto', sans-serif;
+}
+
+a {
+  color: #000;              
+  text-decoration: none;  
+}
+
+a:hover {
+  color: #333;              
+  text-decoration: none;    
+}
+
+ul, ol {
+  padding-left: 0; 
+}
+
+.menu {
+  margin-top: 1rem;
+  margin-right: 20px;
+}
+
+
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: #fff;
+  padding: 10px 10px 10px 0;
+  border-bottom: 1px solid #ddd;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  height: 80px; 
+}
+
+.menu img {
+  height: 21px; 
+  width: auto;
+  margin-right: 5px;
+  padding-left: 5px;
+  margin-bottom: 3px;   
+}
+
+.logo img {
+  height: 60px; 
+  width: auto;   
+  object-fit: contain; 
+  display: block;
+  margin-left: 15px;
+}
+
+.menu-toggle {
+  font-size: 22px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: none;
+}
+
+.layout {
+  display: flex;
+  min-height: 100vh; 
+}
+.nav-icon {
+  width: 24px;      
+  height: 24px;     
+  object-fit: contain;
+  margin-right: 8px;
+  flex-shrink: 0;   
+  vertical-align: middle;
+}
+/* Левая панель */
+.sidebar {
+    position: fixed;
+    top: 80px;
+    width: 240px;
+    height: calc(100vh - 80px);
+    background: #fff;
+    border-right: 1px solid #ddd;
+    padding: 15px 0 15px 0px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between; /* верхний контент сверху, кнопка выхода внизу */
+    overflow-y: auto;
+}
+
+.sidebar ul {
+  list-style: none;
+  padding-left: 15px;
+}
+
+.sidebar li {
+  margin-bottom: 10px;
+  cursor: pointer;
+  font-size: 21px;
+  border-radius: 6px;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.sidebar li.active a {
+  font-weight: bold;
+  background: #D9D9D9; 
+  border-radius: 6px;
+  display: block;
+  color: #000;
+  padding:7px 7px 7px 0;
+}
+
+.resources {
+  flex: 0 0 auto;
+}
+
+.resources h4 {
+  margin-bottom: 8px;
+  font-size: 20px;
+  color: #555;
+  padding-left: 15px;
+}
+
+.logout {
+  flex: 0 0 auto;
+  margin-top: auto;
+}
+.settings {
+  margin-bottom: 8px;
+  font-size: 20px;
+  position: relative;
+}
+
+.settings a {
+  display: flex;
+  align-items: center;
+  gap: 3px; 
+  text-decoration: none;
+  color: inherit;
+}
+
+.settings img {
+  margin-right: 3px; 
+  width: 20px; 
+  height: 20px;
+}
+.settings-dropdown {
+  display: none;
+  position: fixed; 
+  top: 80px;       
+  right: 0px;     
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  z-index: 1000;
+  min-width: 200px;
+}
+.settings-dropdown a {
+  display: block;
+  padding: 10px;
+  color: #000;
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.settings-dropdown a:hover {
+  background: #f0f0f0;
+  
+}
+
+.logout a {
+  display: block;
+  font-size: 18px;
+  color: #555;
+  padding: 10px;
+  text-decoration: none;
+  border-top: 1px solid #ddd; 
+}
+
+.logout a:hover {
+  color: #000;
+  background-color: #f0f0f0;
+  border-radius: 5px;
+}
+
+.content {
+  margin-left: 230px;
+  flex: 1;
+  background: #f9f9f9;
+  padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .layout {
+    flex-direction: column;
   }
 
+  .menu-toggle {
+    display: block;
+  }
 
-.form-select {
-    width: 150px; /* Уменьши по необходимости */
-}
+  .header {
+    justify-content: flex-start;
+    gap: 10px;
+  }
 
-header {
-  font-size: 16px !important;      /* Жёстко задаём размер */
-  line-height: 1.2 !important;     /* Фиксируем высоту строки */
-  font-weight: normal !important;  /* Фиксируем вес шрифта */
-  color: #000 !important;           /* Жёстко цвет, если нужно */
-  transition: none !important;      /* Отключаем переходы */
-  user-select: none !important;     /* Если нужно, запрет выбора */
-}
+  .logo {
+    margin-left: auto;
+    font-size: 18px;
+  }
 
-#settingsDropdown {
-  outline: none !important;
-  box-shadow: none !important;
-}
+  /* Скрываем панель изначально */
+  .sidebar {
+    left: -250px; /* скрыта за экраном */
+    transition: left 0.3s ease;
+  }
 
-.navbar-nav .nav-link,
-.navbar-brand {
-    font-size: 18px; /* Увеличь до нужного значения */
-}
+  /* Когда активна — показывает */
+  .sidebar.active {
+    left: 0;
+  }
 
-* {
-    font-family: 'Roboto', Arial, sans-serif !important; /* Устанавливет один шрифт для всего вообще*/
+  .content {
+    margin-left: 0;
+    padding: 15px;
+  }
 }
