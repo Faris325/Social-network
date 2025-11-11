@@ -24,6 +24,7 @@ services:
     depends_on:
       - db
     volumes:
+      # создаются тома, далее меппинг 
       - static_volume:/app/staticfiles
       - media_volume:/app/media
 
@@ -33,6 +34,7 @@ services:
     ports:
       - "80:80"
     volumes:
+      # если папки не существует, она будет создана 
       - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
       - static_volume:/staticfiles:ro
       - media_volume:/media

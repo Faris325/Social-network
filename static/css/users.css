@@ -25,6 +25,38 @@ a {
     text-decoration: none;
     color: black;
 }
+
+.friend-add-button {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    background-color: #ececec;
+    border: 1px solid #b0b0b0;
+    border-radius: 20px;
+    cursor: pointer;
+    color: #333;
+    font-size: 14px;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.friend-add-button:hover {
+    background-color: #d0d0d0;
+}
+
+.friend-add-button:active {
+    background-color: #c0c0c0;
+}
+
+.image_friend_add {
+    width: 18px;
+    height: 18px;
+    filter: grayscale(100%);
+}
+
+.friend-add-text {
+    color: #333;
+}
 .pagination {
     --bs-pagination-color: #6c757d; /* серый текст */
     --bs-pagination-bg: #e9ecef; /* светло-серый фон */

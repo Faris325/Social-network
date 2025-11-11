@@ -1,133 +1,173 @@
-.profile-main {
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    padding-top: 60px;   /* чуть больше отступ сверху */
-    padding-bottom: 60px;
-}
-
 .profile-container {
-    background-color: #ffffff;
-    border-radius: 20px;
-    padding: 80px 70px;
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
-    width: 100%;
-    max-width: 1000px;    /* Увеличена максимальная ширина */
-    text-align: center;
+    width: 900px; /* было 700px */
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
 }
-
 
 .profile-header {
-    margin-bottom: 50px;  /* больше отступ */
+    display: flex;
+    align-items: center;
+    margin-top: 30px; /* было 20px */
 }
 
 .profile-image {
-    width: 260px;    /* увеличен размер картинки */
-    height: 260px;
+    width: 120px; /* было 80px */
+    height: 120px; /* было 80px */
     border-radius: 50%;
-    border: 6px solid #ddd;
     object-fit: cover;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);  /* чуть сильнее тень */
 }
 
-.profile-details {
-    margin-top: 30px;
-    margin-bottom: 50px;
+.profile-info h1 {
+    margin: 0;
+    font-size: 30px; /* было 24px */
 }
 
-.profile-name {
-    font-size: 3.6rem;    /* увеличенный размер шрифта */
-    font-weight: 700;
-    color: #222;
-    margin-top: 15px;
+.last-seen {
+    color: #888;
+    font-size: 16px; /* было 14px */
+    margin-top: 8px; /* было 5px */
+}
+
+.profile-tabs {
+    display: flex;
+    gap: 20px; /* было 15px */
+    margin-top: 30px; /* было 20px */
+}
+
+.profile-tabs .tab {
+    background: none;
+    border: none;
+    padding: 12px 20px; /* было 10px 15px */
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 12px; /* было 10px */
+    font-size: 16px; /* увеличил размер текста */
+}
+
+.profile-tabs .tab.active {
+    background-color: #ddd;
 }
 
 .profile-post-form {
-    width: 100%;
-    max-width: 100%;
+    margin-top: 30px; /* было 20px */
+    display: flex;
+    flex-direction: column;
 }
 
 .form-textarea {
     width: 100%;
-    font-size: 1.3rem;   /* больше шрифт */
-    padding: 20px 22px;  /* больше паддингов */
-    border-radius: 14px;
-    border: 2px solid #ccc;
-    resize: vertical;
-    min-height: 140px;   /* выше textarea */
-    box-shadow: inset 0 1px 6px rgba(0,0,0,0.12);
-    margin-bottom: 30px;
+    border-radius: 12px; /* было 10px */
+    padding: 15px; /* было 10px */
+    border: 1px solid #ccc;
+    resize: none;
+    font-size: 16px; /* увеличен шрифт */
 }
 
 .form-footer {
+    margin-top: 15px; /* было 10px */
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 24px;
-    justify-content: flex-start;
-    flex-wrap: nowrap;
 }
 
-.form-file-input {
-    flex: 0 0 320px; /* увеличена ширина */
-    padding: 14px 18px;
-    border-radius: 12px;
-    border: 1.8px solid #bbb;
+.publication-item {
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0; /* было 15px 0 */
+    font-size: 16px; /* общий размер текста увеличен */
+}
+
+.publication-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px; /* было 10px */
+    font-size: 18px; /* увеличен шрифт темы */
+}
+
+.publication-media img {
+    max-width: 100%;
+    border-radius: 12px; /* было 10px */
+    margin-top: 15px; /* было 10px */
+}
+
+.publication-actions {
+    display: flex;
+    gap: 20px; /* было 15px */
+    margin-top: 15px; /* было 10px */
+    color: #555;
+    font-size: 16px; /* было 14px */
+}
+
+.nav-tabs {
+    border-bottom: none; 
+}
+
+.nav-tabs .nav-link {
+    border: none;
+
+    border-radius: 25px; /* было 20px */
+    margin-right: 12px; /* было 8px */
+    color: #333;
+    font-weight: 500;
+    font-size: 18px; /* увеличен текст */
+    padding: 4px 18px; /* увеличен padding */
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #d6d5d5; 
+}
+
+.action-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #e0e0e0; /* светло-серый фон */
+    border-radius: 20px;       /* овальная форма */
+    padding: 6px 12px;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+    cursor: default;
+    transition: background-color 0.2s ease;
+}
+
+.action-chip:hover {
+    background-color: #cfcfcf; /* немного темнее при наведении */
+}
+
+.action-chip img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+.like-publication {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #e0e0e0;  /* фон кнопки */
+    border: none;
+    border-radius: 20px;         /* округлые края */
+    padding: 6px 12px;
     cursor: pointer;
-    font-size: 1.1rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    transition: border-color 0.3s ease;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.2s ease;
 }
 
-.form-file-input:hover {
-    border-color: #3b82f6;
+.like-publication:hover {
+    background-color: #cfcfcf;   /* при наведении чуть темнее */
 }
 
-.btn-dark.publication {
-    flex-shrink: 0;
-    padding: 14px 50px;
-    font-size: 1.3rem;
-    font-weight: 700;
-    cursor: pointer;
-    margin-left: 210px;
+.like-publication img {
+    width: 20px;   /* размер картинки лайка */
+    height: 20px;
+    object-fit: cover;
+    vertical-align: middle;
 }
 
-/* Адаптивность для мобильных устройств */
-@media (max-width: 800px) {
-    .profile-container {
-        padding: 60px 40px;
-        max-width: 95%;
-    }
-
-    .profile-image {
-        width: 220px;
-        height: 220px;
-    }
-
-    .profile-name {
-        font-size: 2.6rem;
-    }
-
-    .form-textarea {
-        font-size: 1.15rem;
-        min-height: 120px;
-    }
-
-    .form-file-input {
-        flex: 1 1 auto;
-        width: 100%;
-    }
-
-    .btn-dark.publication {
-        width: 140px;
-        padding: 12px 0;
-        font-size: 1.15rem;
-    }
-
-    .form-footer {
-        flex-wrap: wrap;
-        justify-content: center;
-        gap: 16px;
-    }
+.like-publication .action-chip {
+    background: none;   /* убираем фон у span */
+    padding: 0;
+    gap: 0;
 }
+

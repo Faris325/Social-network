@@ -72,8 +72,15 @@ class UserLoginView(FormView):
 
         user = auth.authenticate(phone_number=phone_number, password=password)
 
+
+        remember = self.request.POST.get('remember') 
+
+    
         if user: 
             auth.login(self.request, user)
+
+            if remember != 'on':
+                self.request.session.set_expiry(0)  # сессия до закрытия браузера
 
             next_url = self.request.GET.get('next')
 
@@ -83,7 +90,7 @@ class UserLoginView(FormView):
                 user.save()
 
             if next_url:
-                HttpResponseRedirect(next)
+                return HttpResponseRedirect(next_url)
 
             return super().form_valid(form)
         
@@ -127,14 +134,21 @@ class UserProfileView(LoginRequiredMixin, View):
     """Контроллер для отображения профиля""" 
 
     def get(self, request):
-        publications = (Publications.objects.filter(user = request.user)
+        user_publications = (Publications.objects.filter(user=request.user)
                         .order_by('-created_at'))
         
+        
+        liked_publications = Publications.objects.filter(liked_by=request.user)
+                            
+                                
+
         context = {
             'title': 'Профиль',
-            'publications': publications,
-            'my_user': True
-            }
+            'publications': user_publications,
+            'my_user': True,
+            'liked_publications': liked_publications
+        }
+        
         return render(request, 'profile.html', context)
 
      

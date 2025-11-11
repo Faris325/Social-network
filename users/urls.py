@@ -14,11 +14,10 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from atexit import register
-from django.contrib import admin
+
 from django.urls import path
 from users import views
-from django.urls import include
+
 
 app_name = 'users'
 
@@ -41,7 +40,7 @@ urlpatterns = [
     path('logout/', views.UserLogoutView.as_view(), 
          name = 'logout'
          ),  
-    path('profile/users/', views.Users.as_view(), 
+    path('users/', views.Users.as_view(), 
          name = 'search_friends'
          ),
 

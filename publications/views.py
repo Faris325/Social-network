@@ -5,6 +5,7 @@
     PublicationDelete - контроллер для удаления публикаций
 """
 import json
+from multiprocessing import context
 
 from django.db.models import IntegerField 
 from django.views.generic.edit import CreateView
@@ -22,6 +23,7 @@ from django.template.loader import render_to_string
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
+from publications.models import Comments
 from friends.models import Friends
 
 
@@ -47,7 +49,7 @@ class PublicationsView(LoginRequiredMixin, CreateView):
         """
         Добавляет в контекст публикации пользователя и его друзей.
 
-        1. Получает список id друзей текущего пользователя и самого 
+        1. Получает список id друзей 
            пользователя.
         2. Получает публикации которые относятся к этим id 
         3. Добавляет публикации в контекст для отображения в шаблоне.
@@ -64,15 +66,23 @@ class PublicationsView(LoginRequiredMixin, CreateView):
             )
             ).values_list('friend_id', flat=True))
 
-        friends_id.append(self.request.user.id)
-
 
         publications = (Publications.objects.filter(user__in=friends_id)
                         .select_related("user").order_by('-created_at')
                         )
+        
 
         paginate_publications = Paginator(publications, 6)
-        context['publications'] = paginate_publications.page(1)
+        context['friends_publications'] = paginate_publications.page(1)
+
+
+        # popular_publications = Publications.objects.
+
+        context['topics'] = (Publications.objects
+                             .values_list('topic',flat=True)
+                             .order_by('-created_at'))
+
+        
       
         return context
 
@@ -96,7 +106,6 @@ class PublicationsView(LoginRequiredMixin, CreateView):
             )
             ).values_list('friend_id', flat=True))
 
-            friends_id.append(self.request.user.id)
 
             publications = (Publications.objects.filter(user__in=friends_id)
                             .select_related("user").order_by('-created_at')
@@ -112,7 +121,7 @@ class PublicationsView(LoginRequiredMixin, CreateView):
             return JsonResponse({'html': html})
     
 
-class PublicationDelete(LoginRequiredMixin, View):
+class PublicationDelete(View):
 
     """Контроллер для удаления публикации
     """
@@ -121,5 +130,46 @@ class PublicationDelete(LoginRequiredMixin, View):
         data = json.loads(request.body)
         
         Publications.objects.get(id=data['publication_id']).delete()
+
+        return JsonResponse({'status': 'ok'})
+
+
+class PublicationLike(View):
+    def post(self,request):
+        data = json.loads(request.body)
+        publication = Publications.objects.get(id = data['publication_id'])
+
+        if not publication.liked_by.filter(id = request.user.id).exists():
+            publication.liked_by.add(request.user)
+            return JsonResponse({'status': 'ok'})
+        else:
+            publication.liked_by.remove(request.user)
+            return JsonResponse({'status': 'not_ok'})
+        
+
+class PublicationComments(View):
+    def get(self,request):
+        data = request.GET.get('publication_id')
+
+        publication = Publications.objects.get(id = data)
+
+        publication_comments = publication.comments.all()
+
+        context = {
+            'publication':publication,
+            'comments':publication_comments
+            }       
+
+        html = render_to_string(
+            'includes/comments-publication.html', context, request)
+
+        return JsonResponse({'html': html})
+
+    def post(self, request):
+        data = json.loads(request.body)
+
+        publication = Publications.objects.get(id = data['publication_id'])
+
+        Comments.objects.create(publication=publication, text= data['text'])
 
         return JsonResponse({'status': 'ok'})

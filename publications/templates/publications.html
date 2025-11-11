@@ -3,100 +3,306 @@
 {% load tz %}
 
 {% block css %}
-<link rel="stylesheet" href="{% static "css/publications.css" %}">
+<link rel="stylesheet" href="{% static 'css/publications.css' %}">
 {% endblock css %}
 
 {% block content %}
-  <div class="container py-4" id="post-container">
-      {% for publication in publications %}
-      <div class="card mb-3 "id="publication-{{publication.id}}" data-publication-id="{{publication.id}}">
-        <div class="card-body">
-          <div class="fw-bold d-flex justify-content-between">
-            {% if publication.user.image %}
-            <a href="{% url "friends:friend-profile" publication.user.id%}">
-              <img class = "round-image"  src="{{publication.user.image.url}}" alt="Фото">
-            </a>
-            {% else %}
-              <a href="{% url "friends:friend-profile" publication.user.id%}">
-                <img class = "round-image" src="{% static "image/profile_image/profile.webp" %}" alt="фото">
-              </a>
-            {% endif %}
-            <span>{{ publication.user.nickname}}: {%timezone user.time_zone%}{{ publication.created_at }}{% endtimezone %}</span>
-            {% if user == publication.user %}
-              <button data-id="{{publication.id}}" class="delete-publication"><img src="{% static "image/delete.png" %}" alt="Удалить"></button>
-            {% endif %}
-          </div>
-          <div class="mb-2">{{ publication.text }}</div>
-      {% if publication.media %}
-        {% if publication.media.name|lower|slice:"-4:" == ".mp4" or publication.media.name|lower|slice:"-4:" == ".avi" %}
-            <video controls class="img-fluid rounded">
-                <source src="{{ publication.media.url }}" type="video/mp4">
-                Ваш браузер не поддерживает воспроизведение видео.
-            </video>
-        {% else %}
-            <img src="{{ publication.media.url }}" alt="Media" class="img-fluid rounded">
-        {% endif %}
-      {% endif %}
+<div class="profile-container mt-5">
+
+    <!-- Вкладки -->
+    <ul class="nav nav-tabs mt-3" id="publicationsTab" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="popular-tab" data-bs-toggle="tab" data-bs-target="#popular" type="button" role="tab" aria-controls="popular" aria-selected="true">Популярные</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="friends-tab" data-bs-toggle="tab" data-bs-target="#friends" type="button" role="tab" aria-controls="friends" aria-selected="false">Друзья</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="topics-tab" data-bs-toggle="tab" data-bs-target="#topics" type="button" role="tab" aria-controls="topics" aria-selected="false">Темы</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="publicationsTabContent">
+
+        <!-- Популярные публикации -->
+        <div class="tab-pane fade show active" id="popular" role="tabpanel" aria-labelledby="popular-tab">
+            {% for publication in publications %}
+            <div data-id="{{publication.id}}" class="publication-item pb-3 border-bottom position-relative">
+                {% if user == publication.user %}
+                    <button data-id="{{ publication.id }}" class="delete-publication btn btn-sm btn-light position-absolute top-0 end-0" style="font-size: 16px;">&#10006;</button>
+                {% endif %}
+                <div class="publication-header mb-2">
+                    <strong>Тема: {{ publication.topic }}</strong>
+                </div>
+                <p>{{ publication.text }}</p>
+                {% if publication.media %}
+                <div class="publication-media mt-2">
+                    {% if publication.media.name|lower|slice:"-4:" in ".mp4.avi" %}
+                        <video controls class="img-fluid rounded">
+                            <source src="{{ publication.media.url }}" type="video/mp4">
+                            Ваш браузер не поддерживает воспроизведение видео.
+                        </video>
+                    {% else %}
+                        <img src="{{ publication.media.url }}" alt="Publication media" class="img-fluid rounded">
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="publication-actions mt-2 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button data-id="{{ publication.id }}" class="like-publication">
+                            {% if user in publication.liked_by.all %}
+                                <img class="like_img" src="{% static 'image/active-like.png' %}" alt="Like">
+                            {% else %}
+                                <img class="dislike_img" src="{% static 'image/like.png' %}" alt="Like">
+                            {% endif %}
+                            <span class="action-chip">{{ publication.liked_by.count }}</span>
+                          <button data-id="{{ publication.id }}" class="open-comments">
+                                <img src="{% static 'image/comments.png' %}" alt="Comments">
+                                <span class="action-chip">{{ publication.comments_count }}</span>
+                          </button>
+                        <span class="action-chip ms-2">
+                            <img src="{% static 'image/repost.png' %}" alt="Repost">
+                            {{ publication.reposts_count }}
+                        </span>
+                    </div>
+                    <span class="publication-time">{{ publication.created_at|timesince }} назад</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>Публикаций нет</p>
+            {% endfor %}
         </div>
-      </div>
-      {% empty %}
-      <p>Пока нет публикаций</p>
-      {% endfor %}
- 
-  </div>
+
+        <!-- Публикации друзей -->
+        <div class="tab-pane fade" id="friends" role="tabpanel" aria-labelledby="friends-tab">
+            {% for publication in friends_publications %}
+            <div data-id="{{publication.id}}" class="publication-item pb-3 border-bottom position-relative">
+                <div class="publication-header mb-2">
+                    <strong>{{ publication.user.nickname }}</strong>
+                </div>
+                <p>{{ publication.text }}</p>
+                {% if publication.media %}
+                <div class="publication-media mt-2">
+                    {% if publication.media.name|lower|slice:"-4:" in ".mp4.avi" %}
+                        <video controls class="img-fluid rounded">
+                            <source src="{{ publication.media.url }}" type="video/mp4">
+                            Ваш браузер не поддерживает воспроизведение видео.
+                        </video>
+                    {% else %}
+                        <img src="{{ publication.media.url }}" alt="Publication media" class="img-fluid rounded">
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="publication-actions mt-2 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button data-id="{{ publication.id }}" class="like-publication">
+                            {% if user in publication.liked_by.all %}
+                                <img class="like_img" src="{% static 'image/active-like.png' %}" alt="Like">
+                            {% else %}
+                                <img class="dislike_img" src="{% static 'image/like.png' %}" alt="Like">
+                            {% endif %}
+                            <span class="action-chip">{{ publication.liked_by.count }}</span>
+                        </button>
+                        <button data-id="{{ publication.id }}" class="open-comments">
+                            <span class="action-chip ms-2">
+                                <img src="{% static 'image/comments.png' %}" alt="Comments">
+                                {{ publication.comments_count }}
+                            </span>
+                        </button>
+
+                    </div>
+                    <span class="publication-time">{{ publication.created_at|timesince }} назад</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>Публикаций друзей нет</p>
+            {% endfor %}
+        </div>
+
+        <!-- Темы -->
+        <div class="tab-pane fade" id="topics" role="tabpanel" aria-labelledby="topics-tab">
+            {% for topic in topics %}
+            <div class="publication-item pb-3 border-bottom">
+                <strong>{{ topic}}</strong>
+            </div>
+            {% empty %}
+            <p>Тем пока нет</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</div>
+
+{% comment %}модальное окно для публикаций{% endcomment %}
+    <div class="modal fade" id="commentsModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-scrollable modal-lg">
+        <div class="modal-content">
+        <div class="modal-body" id="modal-body">
+            
+        </div>
+        </div>
+    </div>
+    </div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+const csrftoken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-    document.querySelectorAll('.delete-publication').forEach(button => {
-        button.addEventListener('click', function () {
-            const publicationId = this.dataset.id;
-            const buttonElement = this;
+// для вывода комментариев у поста
+document.querySelectorAll('.open-comments').forEach(button => {
+    button.addEventListener('click', function () {
+        const publicationId = this.dataset.id;
+        const url = "{% url 'publications:publication-comments' %}?publication_id=" + publicationId;
 
-            fetch("{% url 'publications:publication-delete' %}", {
-                method: 'POST',
-                headers: {
-                    'X-CSRFToken': csrftoken,
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ publication_id: publicationId })
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.status === 'ok') {
-                    // Например, скрыть удалённую публикацию
-                    buttonElement.closest('.card').remove();
-                } else {
-                    alert('Ошибка при удалении');
-                }
-            })
-            .catch(error => {
-                console.error('Ошибка:', error);
-            });
-        });
+        fetch(url, { method: 'GET' })
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('modal-body').innerHTML = data.html;
+            new bootstrap.Modal(document.getElementById('commentsModal')).show();
+        })
+        .catch(error => console.error(error));
     });
-</script>
-<script>
-let page = 1;
-let loading = false;
+});
 
-window.addEventListener("scroll", () => {
-    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 100 && !loading) {
-        loading = true;
-        page += 1;
+// Удаление публикаций
+document.querySelectorAll('.delete-publication').forEach(button => {
+    button.addEventListener('click', function () {
+        const publicationId = this.dataset.id;
+        const buttonElement = this;
 
-        fetch(`/publications/?page=${page}`)
-            .then(response => response.json())
-            .then(data => {
-                // Добавьте ваш код для вставки новых публикаций, например:
-                document.getElementById("post-container").insertAdjacentHTML("beforeend", data.html);
-                loading = false;
-            })
-            .catch(error => {
-                console.error("Ошибка при загрузке:", error);
-                loading = false;
-            });
-    }
+        fetch("{% url 'publications:publication-delete' %}", {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrftoken,'Content-Type': 'application/json'},
+            body: JSON.stringify({ publication_id: publicationId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'ok') buttonElement.closest('.publication-item').remove();
+            else alert('Ошибка при удалении');
+        })
+        .catch(error => console.error(error));
+    });
+});
+
+// Лайки публикаций
+document.querySelectorAll('.like-publication').forEach(button => {
+    button.addEventListener('click', function () {
+        const publicationId = this.dataset.id;
+        const buttonElement = this;
+
+        fetch("{% url 'publications:publication-like' %}", {
+            method: 'POST',
+            headers: {'X-CSRFToken': csrftoken,'Content-Type': 'application/json'},
+            body: JSON.stringify({ publication_id: publicationId })
+        })
+        .then(response => response.json())
+        .then(data => {
+            const likesSpan = buttonElement.querySelector('.action-chip');
+            const like_img = buttonElement.querySelector('img');
+            let count = parseInt(likesSpan.textContent) || 0;
+
+            if (data.status === 'ok') {
+                count += 1;
+                likesSpan.textContent = count;
+                like_img.src = "{% static 'image/active-like.png' %}";
+            } else if (data.status === 'not_ok') {
+                count = Math.max(count - 1, 0);
+                likesSpan.textContent = count;
+                like_img.src = "{% static 'image/like.png' %}";
+            }
+        })
+        .catch(error => console.error(error));
+    });
+});
+// лайки публикаций 
+document.body.addEventListener('click', function(e) {
+    const button = e.target.closest('.like-publication');
+    if (!button) return;
+
+    const publicationId = button.dataset.id;
+
+    fetch("{% url 'publications:publication-like' %}", {
+        method: 'POST',
+        headers: {'X-CSRFToken': csrftoken, 'Content-Type': 'application/json'},
+        body: JSON.stringify({ publication_id: publicationId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Находим все кнопки с этим publicationId
+        const buttons = document.querySelectorAll(`.like-publication[data-id="${publicationId}"]`);
+        
+        buttons.forEach(btn => {
+            const likesSpan = btn.querySelector('.action-chip');
+            const like_img = btn.querySelector('img');
+            let count = parseInt(likesSpan.textContent) || 0;
+
+            if (data.status === 'ok') {
+                count += 1;
+                likesSpan.textContent = count;
+                like_img.src = "{% static 'image/active-like.png' %}";
+            } else if (data.status === 'not_ok') {
+                count = Math.max(count - 1, 0);
+                likesSpan.textContent = count;
+                like_img.src = "{% static 'image/like.png' %}";
+            }
+        });
+    })
+    .catch(error => console.error(error));
+});
+
+
+
+// для отправки комментария
+document.body.addEventListener('submit', function(e) {
+    const form = e.target.closest('#comment-form');
+    if (!form) return;
+
+    e.preventDefault();
+
+    const input = form.querySelector('input[name="text"]');
+    const text = input.value.trim();
+    if (!text) return;
+
+    const publicationId = form.dataset.publicationId;
+    const userDate = new Date().toLocaleString('ru-RU');
+
+    fetch("{% url 'publications:add-comments' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ text: text, publication_id: publicationId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'ok') {
+            const commentsList = document.querySelector('#modal-comments');
+
+            // Удаляем сообщение "Комментариев пока нет"
+            const emptyMsg = commentsList.querySelector('p');
+            if (emptyMsg && !emptyMsg.classList.contains('comment')) emptyMsg.remove();
+
+            // Создаём новый комментарий
+            const newComment = document.createElement('div');
+            newComment.classList.add('comment', 'border-bottom', 'py-2');
+            newComment.innerHTML = `
+                <p>${text}</p>
+                <small class="text-muted">${userDate}</small>
+            `;
+
+            commentsList.append(newComment);
+
+            input.value = '';
+        } else {
+            console.error('Ошибка при отправке комментария');
+        }
+    })
+    .catch(error => console.error(error));
 });
 </script>
+
 {% endblock content %}
-</html>
+

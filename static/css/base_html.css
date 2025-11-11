@@ -30,7 +30,9 @@ ul, ol {
   margin-right: 20px;
 }
 
-
+.up-panel{
+  display: flex;
+}
 
 .header {
   display: flex;
@@ -77,10 +79,14 @@ ul, ol {
   width: 24px;      
   height: 24px;     
   object-fit: contain;
-  margin-right: 8px;
   flex-shrink: 0;   
   vertical-align: middle;
 }
+
+.make-publications img{
+  margin-bottom: 2px;
+}
+
 /* Левая панель */
 .sidebar {
     position: fixed;
@@ -92,7 +98,7 @@ ul, ol {
     padding: 15px 0 15px 0px;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* верхний контент сверху, кнопка выхода внизу */
+    justify-content: space-between; 
     overflow-y: auto;
 }
 
@@ -129,15 +135,19 @@ ul, ol {
   padding-left: 15px;
 }
 
-.logout {
-  flex: 0 0 auto;
-  margin-top: auto;
-}
+
 .settings {
   margin-bottom: 8px;
   font-size: 20px;
   position: relative;
 }
+
+.make-publications {
+  margin-bottom: 8px;
+  font-size: 20px;
+  position: relative;
+}
+
 
 .settings a {
   display: flex;
@@ -177,19 +187,77 @@ ul, ol {
   
 }
 
-.logout a {
+.profile-post-form textarea {
+    resize: none;
+}
+
+.publication {
+    padding: 6px 18px;
+    font-size: 14px;
+}
+
+#topicInput {
+    border-radius: 6px;
+}
+
+#topicInput::placeholder {
+    color: #999;
+    font-style: italic;
+}
+.file-add-label {
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.file-add-icon {
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+  opacity: 0.8;
+}
+
+.file-add-label:hover .file-add-icon {
+  transform: scale(1.1);
+  opacity: 1;
+}
+
+.publication {
+  padding: 6px 18px;
+  font-size: 14px;
+}
+
+.profile-post-form textarea {
+  resize: none;
+}
+
+.tall-modal .modal-content {
+  height: 500px;
+
+}
+
+button.logout {
   display: block;
   font-size: 18px;
   color: #555;
   padding: 10px;
   text-decoration: none;
-  border-top: 1px solid #ddd; 
+  border: none;          
+  background: none;      
+  width: 100%;           
+  text-align: left;      
+  border-top: 1px solid #ddd;
+  cursor: pointer;       
 }
 
-.logout a:hover {
+button.logout:hover {
   color: #000;
   background-color: #f0f0f0;
   border-radius: 5px;
+}
+
+.logout {
+  flex: 0 0 auto;
+  margin-top: auto;
 }
 
 .content {
@@ -238,3 +306,4 @@ ul, ol {
     padding: 15px;
   }
 }
+

@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<div class="profiles-container container mt-4">
+<div class="profiles-container container ">
     <h2>Пользователи</h2>
     <form method="get" action="{% url 'users:search_friends' %}" class="mb-4">
         <div class="input-group">
@@ -37,13 +37,15 @@
                             {% if user.id not in sent_friends and user.id not in add_friends %}
                                 <input type="hidden" name="receiver" value="{{ user.id }}">
                                 <button type="button" class="friend-add-button" data-user-id="{{ user.id }}" id="friend-{{ user.id }}">
-                                    <img class="image_friend_add" src="{% static 'image/friend_add.png' %}" alt="Добавить в друзья">
+                                    <img class="image_friend_add" src="{% static 'image/users.png' %}" alt="Добавить в друзья">
                                     <span class="friend-add-text">Добавить в друзья</span>
                                 </button>
                             {% else %}
                                 <span class="friend-add-text">
                                     {% if user.id in sent_friends %}
-                                        Заявка отправлена
+                                        <button type="button" class="friend-add-button">
+                                            Заявка отправлена
+                                        </button>
                                     {% elif user.id in add_friends %}
                                         У вас в друзьях
                                     {% endif %}

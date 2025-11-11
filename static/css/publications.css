@@ -1,135 +1,178 @@
-/* Контейнер публикаций — стили только для прямых потомков .card */
-.container > .card {
-  background: #ffffff;
-  border-radius: 16px;
-  box-shadow:
-    0 1px 3px rgba(0, 0, 0, 0.12),
-    0 8px 24px rgba(0, 0, 0, 0.08);
-  border: none;
-  margin-bottom: 32px;
-  overflow: hidden;
-  transition:
-    box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-    transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  cursor: default;
+.profile-container {
+    width: 900px; /* было 700px */
+    margin: 0 auto;
+    font-family: Arial, sans-serif;
 }
 
-.container > .card:hover {
-  box-shadow:
-    0 12px 28px rgba(0, 0, 0, 0.18),
-    0 4px 30px rgba(0, 0, 0, 0.12);
-  transform: translateY(-6px);
-  cursor: pointer;
+.profile-header {
+    display: flex;
+    align-items: center;
+    margin-top: 30px; /* было 20px */
 }
 
-.container > .card .card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  padding: 24px 28px 28px;
+.profile-image {
+    width: 120px; /* было 80px */
+    height: 120px; /* было 80px */
+    border-radius: 50%;
+    object-fit: cover;
 }
 
-/* Верхний блок — аватар, имя, кнопка */
-.container > .card .fw-bold {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 14px;
+.profile-info h1 {
+    margin: 0;
+    font-size: 30px; /* было 24px */
 }
 
-/* Аватарка — увеличена */
-.container > .card .round-image {
-  width: 72px;       /* увеличили с 56px до 72px */
-  height: 72px;      /* увеличили с 56px до 72px */
-  border-radius: 50%;
-  object-fit: cover;
-  transition: transform 0.35s ease, box-shadow 0.35s ease;
-  flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(0, 0, 0, 0.07);
+.last-seen {
+    color: #888;
+    font-size: 16px; /* было 14px */
+    margin-top: 8px; /* было 5px */
 }
 
-.container > .card .round-image:hover {
-  transform: scale(1.15);
-  box-shadow: 0 0 16px rgba(0, 0, 0, 0.3);
+.profile-tabs {
+    display: flex;
+    gap: 20px; /* было 15px */
+    margin-top: 30px; /* было 20px */
 }
 
-/* Имя и текст — больше шрифт и более насыщенный черный */
-.container > .card .fw-bold span {
-  font-weight: 700;
-  font-size: 1.35rem;      /* увеличили с 1.125rem до 1.35rem */
-  color: #0a0a0a;          /* более насыщенный черный */
-  flex-grow: 1;
-  margin-left: 14px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.profile-tabs .tab {
+    background: none;
+    border: none;
+    padding: 12px 20px; /* было 10px 15px */
+    cursor: pointer;
+    font-weight: bold;
+    border-radius: 12px; /* было 10px */
+    font-size: 16px; /* увеличил размер текста */
 }
 
-/* Медиа (картинка/видео) */
-.container > .card .card-body > img.img-fluid,
-.container > .card .card-body > video.img-fluid {
-  order: 1;
-  border-radius: 16px;
-  max-width: 100%;
-  height: auto;
-  display: block;
-  margin: 0 auto;
-  box-shadow:
-    0 8px 16px rgba(0, 0, 0, 0.12);
-  transition: box-shadow 0.3s ease;
+.profile-tabs .tab.active {
+    background-color: #ddd;
 }
 
-.container > .card .card-body > img.img-fluid:hover,
-.container > .card .card-body > video.img-fluid:hover {
-  box-shadow:
-    0 12px 24px rgba(0, 0, 0, 0.2);
+.profile-post-form {
+    margin-top: 30px; /* было 20px */
+    display: flex;
+    flex-direction: column;
 }
 
-.container > .card .mb-2 {
-  order: 2;
-  font-size: 1.5rem;        
-  line-height: 1.75;
-  color: #222222;             
-  margin-top: 16px;
-  margin-bottom: 24px;
-  white-space: pre-wrap;
-  letter-spacing: 0.02em;
+.form-textarea {
+    width: 100%;
+    border-radius: 12px; /* было 10px */
+    padding: 15px; /* было 10px */
+    border: 1px solid #ccc;
+    resize: none;
+    font-size: 16px; /* увеличен шрифт */
 }
 
-/* Кнопка удаления */
-.container > .card .delete-publication {
-  align-self: flex-end;
-  background: transparent;
-  border: none;
-  color: #000000;
-  font-size: 1.6rem;
-  font-weight: 800;
-  cursor: pointer;
-  padding: 0 8px;
-  line-height: 1;
-  transition: color 0.3s ease, text-shadow 0.3s ease;
-  user-select: none;
+.form-footer {
+    margin-top: 15px; /* было 10px */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.container > .card .delete-publication:hover {
-  color: #000000;
-  text-shadow: 0 0 8px #000000;
-  transform: scale(1.1);
+.publication-item {
+    border-bottom: 1px solid #ddd;
+    padding: 20px 0; /* было 15px 0 */
+    font-size: 16px; /* общий размер текста увеличен */
 }
 
-/* Сообщение, если нет публикаций */
-.container > p {
-  text-align: center;
-  font-size: 1.3rem;
-  color: #999999;
-  margin-top: 70px;
-  font-style: italic;
-  user-select: none;
-  letter-spacing: 0.03em;
+.publication-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px; /* было 10px */
+    font-size: 18px; /* увеличен шрифт темы */
 }
 
-.delete-publication img {
-  width: 40px;
-  height: 40px;
-  object-fit: contain;
+.publication-media img {
+    max-width: 100%;
+    border-radius: 12px; /* было 10px */
+    margin-top: 15px; /* было 10px */
+}
+
+.publication-actions {
+    display: flex;
+    gap: 20px; /* было 15px */
+    margin-top: 15px; /* было 10px */
+    color: #555;
+    font-size: 16px; /* было 14px */
+}
+
+.nav-tabs {
+    border-bottom: none; 
+}
+
+.nav-tabs .nav-link {
+    border: none;
+
+    border-radius: 25px; /* было 20px */
+    margin-right: 12px; /* было 8px */
+    color: #333;
+    font-weight: 500;
+    font-size: 18px; /* увеличен текст */
+    padding: 4px 18px; /* увеличен padding */
+}
+
+.nav-tabs .nav-link.active {
+    background-color: #d6d5d5; 
+}
+
+.action-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #e0e0e0; /* светло-серый фон */
+    border-radius: 20px;       /* овальная форма */
+    padding: 6px 12px;
+    font-size: 15px;
+    color: #333;
+    font-weight: 500;
+    cursor: default;
+    transition: background-color 0.2s ease;
+}
+
+.action-chip:hover {
+    background-color: #cfcfcf; /* немного темнее при наведении */
+}
+
+.action-chip img {
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+}
+.like-publication {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #e0e0e0;  /* фон кнопки */
+    border: none;
+    border-radius: 20px;         /* округлые края */
+    padding: 6px 12px;
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    color: #333;
+    transition: background-color 0.2s ease;
+}
+
+.like-publication:hover {
+    background-color: #cfcfcf;   /* при наведении чуть темнее */
+}
+
+.like-publication img {
+    width: 20px;   /* размер картинки лайка */
+    height: 20px;
+    object-fit: cover;
+    vertical-align: middle;
+}
+
+.like-publication .action-chip {
+    background: none;   /* убираем фон у span */
+    padding: 0;
+    gap: 0;
+}
+.open-comments {
+    border: none;      /* убирает рамку */
+    background: none;  /* убирает фон */
+    padding: 0;        /* убирает внутренние отступы */
+    cursor: pointer;   /* чтобы курсор был как у кнопки */
 }

@@ -40,7 +40,7 @@
 
 .logo {
   position: absolute; 
-  top: -50px;          
+  top: 10px;          
   left: 5px;         
   width: 250px;   
   height: auto;  
@@ -191,77 +191,4 @@
     }
   
 
-@media (min-width: 2560px) {
-    .auth-container {
-        display: flex;
-        width: 1800px;
-        height: 1400px;
-    }
 
-    /* Левая сторона */
-    .left-side h1 {
-        font-size: 48px; 
-    }
-
-    .form-container {
-        padding-left: 80px;
-        padding-right: 80px;
-    }
-
-    .form-group label {
-        font-size: 22px; 
-    }
-
-    .form-group input {
-        font-size: 20px; 
-        padding: 20px 26px;
-    }
-
-    .login-button {
-        font-size: 20px;   
-        padding: 20px;
-    }
-
-
-    .checkbox-group {
-        font-size: 20px; 
-    }
-
-    .checkbox-group a {
-        font-size: 20px; 
-    }
-
-
-    .signup-link {
-        font-size: 20px; 
-        margin-top: 32px;
-    }
-
-    .signup-link a {
-        font-size: 20px; 
-    }
-
-
-    .right-side h2 {
-        font-size: 40px; 
-    }
-
-    .right-side p {
-        font-size: 22px;  
-        line-height: 1.8; 
-    }
-
-    .border-section,
-    .border-section-up {
-        padding-top: 40px;
-        margin-top: 40px;
-        border-top-width: 3px; 
-    }
-
-    /* Логотип */
-    .logo {
-        width: 300px; 
-        top: 0;
-        left: 20px;
-    }
-}

@@ -95,8 +95,7 @@ DATABASES = {
         'USER':'postgres',
         'PASSWORD':'1234',
         'HOST':'localhost',
-        'PORT':'5432',
-                   
+        'PORT':'5432',              
     }
 }
 
@@ -131,7 +130,7 @@ USE_I18N = True
 
 USE_TZ = True
 
-# Домены для обращения к приложению (web- обращение nginx)
+# Домены для обращения к приложению (web это обращение nginx)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'web', 'домен_сайта'] 
 
 # список доменов, с которых джанго разрешает post-запросы c csrf-токеном
@@ -155,7 +154,6 @@ INTERNAL_IPS = [ # это для Django Debug Toolbar
 ]
 
 MEDIA_URL = 'media/'
-
 MEDIA_ROOT = BASE_DIR / 'media'            
 
 # Default primary key field type
@@ -169,17 +167,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)], 
+            "hosts": [("localhost", 6379)], 
         },
     },
 }
 
-CACHES = {
-    "default": {
-        "BACKEND": "django.core.cache.backends.redis.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
-    }
-}
+
 
 AUTH_USER_MODEL = 'users.User' # Используется кастомная модель User
 

@@ -16,87 +16,113 @@
 <body>
   <header class="header">
     <button class="menu-toggle" id="menuToggle">☰</button>
-    <div class="logo"><img src="{% static "image/sitelogo.png" %}" alt=""></div>
+    <div class="logo">
+      <a href="{% url "publications:publication" %}"><img src="{% static "image/sitelogo.png" %}" alt=""></a>
+    </div>
       {% url "users:profile" as profile_url %}
       {% url "users:password" as profile_password %} 
-      {% if request.path == profile_url or profile_password%}
+      {% url "users:search_friends" as search_friends %}
+      {% url "publications:publication" as users_publications %}
+      {% url "friends:friends" as user_friends %}
+      {% url "user_messages:dialogs" as user_messages %}
 
-      <div class="settings">
-        <a href="#" id="settingsToggle">
-          <img src="{% static 'image/settings.png' %}" alt="Настройки" class="nav-icon">
-          Настройки
-        </a>
-        <div class="settings-dropdown" id="settingsDropdown">
-          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal2">
-            Настройки профиля
-          </a>
-          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
-            Изменить пароль
+      {% if request.path == profile_url or profile_password%}
+      <div class = "up-panel">
+         <div class="make-publications me-3">
+          <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal3">
+            <img src="{% static 'image/make-publications.png' %}" alt="Создать" class="nav-icon">
+            Создать
           </a>
         </div>
+        
+        <div class="settings">
+          <a href="#" id="settingsToggle">
+            <img src="{% static 'image/settings.png' %}" alt="Настройки" class="nav-icon">
+            Настройки
+          </a>
+          <div class="settings-dropdown" id="settingsDropdown">
+            <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal2">
+              Настройки профиля
+            </a>
+            <a href="#" class="text-decoration-none text-dark" data-bs-toggle="modal" data-bs-target="#exampleModal">
+              Изменить пароль
+            </a>
+          </div>
+        </div>
+        {% endif %}
       </div>
-      {% endif %}
   </header>
   <div class="layout">
-    <nav class="sidebar" id="sidebar">
-      <ul class="menu">
-       <li>
-          <a href="{% url 'users:profile' %}">
-            <img src="{% static 'image/profile-1.png' %}" alt="Профиль" class="nav-icon">
-            Профиль
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'users:search_friends' %}">
+  <nav class="sidebar" id="sidebar">
+  <div class="sidebar-top">
+    <ul class="menu">
+      <li>
+        <a href="{% url 'users:profile' %}">
+          {% if request.path == profile_url %}
+            <img src="{% static 'image/active-profile.png' %}" alt="Профиль" class="nav-icon">
+          {% else %}
+            <img src="{% static 'image/profile.png' %}" alt="Профиль" class="nav-icon">
+          {% endif %}
+          Профиль
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'users:search_friends'%}">
+          {% if request.path == search_friends %}
+            <img src="{% static 'image/active-users.png' %}" alt="Пользователи" class="nav-icon">
+          {% else %}
             <img src="{% static 'image/users.png' %}" alt="Пользователи" class="nav-icon">
-            Пользователи
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'publications:publication' %}">
+          {% endif %}
+          Пользователи
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'publications:publication' %}">
+          {% if request.path == users_publications %}
+            <img src="{% static 'image/active-publicatons.png' %}" alt="Публикации" class="nav-icon">
+          {% else %}
             <img src="{% static 'image/publications.png' %}" alt="Публикации" class="nav-icon">
-            Публикации
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'friends:friends' %}">
-            <img src="{% static 'image/friends.png' %}" alt="Мои друзья" class="nav-icon">
-            Мои друзья
-          </a>
-        </li>
-        <li>
-          <a href="{% url 'user_messages:dialogs' %}">
-            <img src="{% static 'image/messages.png' %}" alt="Сообщения" class="nav-icon">
-            Сообщения
-          </a>
-        </li>
+          {% endif %}
+          Публикации
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'friends:friends' %}">
+          {% if request.path == user_friends %}
+            <img src="{% static 'image/active-friends.png' %}" alt="Пользователи" class="nav-icon">
+          {% else %}
+            <img src="{% static 'image/friends.png' %}" alt="Пользователи" class="nav-icon">
+          {% endif %}
+          Мои друзья
+        </a>
+      </li>
+      <li>
+        <a href="{% url 'user_messages:dialogs' %}">
+          {% if request.path == user_messages %}
+            <img src="{% static 'image/active-messages.png' %}" alt="Пользователи" class="nav-icon">
+          {% else %}
+            <img src="{% static 'image/messages.png' %}" alt="Пользователи" class="nav-icon">
+          {% endif %}
+          Сообщения
+        </a>
+      </li>
+    </ul>
+    <hr>
+    <div class="resources">
+      <h4>Ресурсы</h4>
+      <ul>
+        <li><a href="#"><img src="{% static 'image/logo.png' %}" class="nav-icon">О сайте</a></li>
+        <li><a href="#"><img src="{% static 'image/rules.png' %}" class="nav-icon">Правила</a></li>
+        <li><a href="#"><img src="{% static 'image/help.png' %}" class="nav-icon">Помощь</a></li>
       </ul>
-      <hr>
-        <div class="resources">
-          <h4>Ресурсы</h4>
-          <ul>
-            <li>
-              <a href="#">
-                <img src="{% static 'image/logo.png' %}" alt="О сайте" class="nav-icon">
-                О сайте
-              </a>
-            </li>
-            <li>
-              <a href="#">
-                <img src="{% static 'image/rules.png' %}" alt="О сайте" class="nav-icon">
-                Правила
-              </a>
-            </li>
-               <li>
-              <a href="#">
-                <img src="{% static 'image/help.png' %}" alt="О сайте" class="nav-icon">
-                Помощь
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="logout"><a href="{% url "users:logout" %}">Выход</a></div>
-    </nav>
+    </div>
+  </div>
+
+  <form method="post" action="{% url 'users:logout' %}">
+    {% csrf_token %}
+    <button class="logout">Выход</button>
+  </form>
+  </nav>
     <main class="content">
       {% block content %}
       {% endblock content %}
@@ -190,6 +216,69 @@
       </div>
     </div>
   </div> 
+
+
+<div class="modal fade" id="exampleModal3" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-xl tall-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Создать публикацию</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+      </div>
+
+      <form action="{% url 'publications:publication' %}" method="post" enctype="multipart/form-data" class="profile-post-form">
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="topicInput" class="form-label">Тема публикации</label>
+            <input 
+              type="text" 
+              class="form-control" 
+              id="topicInput" 
+              name="topic" 
+              placeholder="Например: Технологии, Спорт, Путешествия..."
+              maxlength="100"
+            >
+          </div>
+
+          <div class="mb-3">
+            <label for="text" class="form-label">Текст публикации</label>
+            <textarea 
+              name="text" 
+              id="text" 
+              class="form-control" 
+              rows="4" 
+              placeholder="Поделитесь своими мыслями..."
+              required
+            ></textarea>
+          </div>
+
+          <div class="mb-3 d-flex align-items-center">
+            <label for="mediaInput" class="form-label me-3 mb-0">Добавить изображение или видео</label>
+            
+
+            <input 
+              type="file" 
+              name="media" 
+              accept="image/*,video/*" 
+              id="mediaInput" 
+              class="d-none"
+            />
+
+            <label for="mediaInput" class="file-add-label mb-0">
+              <img src="{% static 'image/file-add.png' %}" alt="Добавить файл" class="file-add-icon">
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-dark btn-sm publication">Опубликовать</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 
 {% block js %} 
 {% endblock js %}
