@@ -17,9 +17,9 @@ from django.db.models import F
 from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.core.paginator import Paginator
+from django.shortcuts import render
 from django.template.loader import render_to_string
-
+from django.db.models import Count
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
@@ -67,59 +67,23 @@ class PublicationsView(LoginRequiredMixin, CreateView):
             ).values_list('friend_id', flat=True))
 
 
-        publications = (Publications.objects.filter(user__in=friends_id)
+        firends_publication = (Publications.objects.filter(user__in=friends_id)
                         .select_related("user").order_by('-created_at')
                         )
         
-
-        paginate_publications = Paginator(publications, 6)
-        context['friends_publications'] = paginate_publications.page(1)
+        context['friends_publications'] = firends_publication 
 
 
-        # popular_publications = Publications.objects.
+        context['popular_publications'] = (Publications.objects.
+                                annotate(likes=Count('liked_by'))
+                                .order_by('-likes'))
 
         context['topics'] = (Publications.objects
                              .values_list('topic',flat=True)
                              .order_by('-created_at'))
 
-        
-      
         return context
 
-    def get(self,request, *args, **kwargs):
-        if not self.request.GET.get('page'):
-            return super().get(request, *args, **kwargs)
-        else:
-            self.object = None  # Обязательная заглушка
-
-            context = self.get_context_data()
-
-            page_number = self.request.GET.get('page')
-
-            friends_id = list(Friends.objects.filter(
-            Q(sender=self.request.user, application_status='accepted')|
-            Q(receiver=self.request.user, application_status='accepted')
-            ).annotate(friend_id = Case(
-                When(sender=self.request.user, then=F('receiver_id')),
-                When(receiver=self.request.user, then=F('sender_id')),
-                output_field=IntegerField()
-            )
-            ).values_list('friend_id', flat=True))
-
-
-            publications = (Publications.objects.filter(user__in=friends_id)
-                            .select_related("user").order_by('-created_at')
-                            )
-
-            paginate_publications = Paginator(publications, 6)
-
-
-            context['publications'] = paginate_publications.page(page_number) 
-            html = render_to_string('includes/publication_card.html', context, 
-                                    request=self.request
-                                    )
-            return JsonResponse({'html': html})
-    
 
 class PublicationDelete(View):
 
@@ -148,12 +112,13 @@ class PublicationLike(View):
         
 
 class PublicationComments(View):
+    """Контроллер для отображения комметариев"""
     def get(self,request):
         data = request.GET.get('publication_id')
 
         publication = Publications.objects.get(id = data)
 
-        publication_comments = publication.comments.all()
+        publication_comments = publication.comments.all().select_related('user').order_by('created_at')
 
         context = {
             'publication':publication,
@@ -170,6 +135,19 @@ class PublicationComments(View):
 
         publication = Publications.objects.get(id = data['publication_id'])
 
-        Comments.objects.create(publication=publication, text= data['text'])
+        Comments.objects.create(publication=publication, text= data['text'], user=request.user)
 
         return JsonResponse({'status': 'ok'})
+    
+
+class PublicationTopic(View):
+    """Для вывода публикаций по темам"""
+    def get(self,request, **kwargs):
+        
+        topic_publications = (Publications.objects.
+                              filter(topic=self.kwargs['topic']))
+
+        context = {
+            'topic_publications': topic_publications
+        }
+        return render(request, "topic.html", context)

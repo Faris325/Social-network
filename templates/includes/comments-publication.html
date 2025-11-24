@@ -39,19 +39,19 @@
     <div id="modal-comments" class="comments-list mb-3">
         {% for comment in comments %}
             <div class="comment border-bottom py-2">
-                <strong>{{ comment.author.nickname }}</strong>
+                <strong>{{ comment.user.nickname }}</strong>
                 <p>{{ comment.text }}</p>
                 {%timezone user.time_zone %}
                     <small class="text-muted">{{ comment.created_at|date:"d.m.Y H:i" }}</small>
                 {%endtimezone%}
             </div>
         {% empty %}
-            <p>Комментариев пока нет.</p>
+            <p class = 'no_comment'>Комментариев пока нет.</p>
         {% endfor %}
     </div>
 
     <!-- Форма добавления комментария -->
-    <form id="comment-form" class="d-flex" method="POST" data-publication-id="{{ publication.id }}">
+    <form id="comment-form" class="d-flex" method="POST" data-publication-id="{{ publication.id }}" data-sender = "{{user.nickname}}" data-user-id = "{{user.id}}">
     {% csrf_token %}
         <input type="text" name="text" class="form-control me-2" placeholder="Напишите комментарий...">
         <button type="submit" class="btn btn-dark">Отправить</button>

@@ -22,6 +22,6 @@ class Publications(models.Model):
 
 class Comments(models.Model):
     publication = models.ForeignKey(Publications, on_delete=models.CASCADE, related_name='comments')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+    user = models.ForeignKey(to = User, on_delete=models.CASCADE, blank=True, null=True)
     text = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)

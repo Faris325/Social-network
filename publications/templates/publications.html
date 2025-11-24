@@ -26,7 +26,7 @@
 
         <!-- Популярные публикации -->
         <div class="tab-pane fade show active" id="popular" role="tabpanel" aria-labelledby="popular-tab">
-            {% for publication in publications %}
+            {% for publication in popular_publications %}
             <div data-id="{{publication.id}}" class="publication-item pb-3 border-bottom position-relative">
                 {% if user == publication.user %}
                     <button data-id="{{ publication.id }}" class="delete-publication btn btn-sm btn-light position-absolute top-0 end-0" style="font-size: 16px;">&#10006;</button>
@@ -57,14 +57,12 @@
                                 <img class="dislike_img" src="{% static 'image/like.png' %}" alt="Like">
                             {% endif %}
                             <span class="action-chip">{{ publication.liked_by.count }}</span>
-                          <button data-id="{{ publication.id }}" class="open-comments">
-                                <img src="{% static 'image/comments.png' %}" alt="Comments">
-                                <span class="action-chip">{{ publication.comments_count }}</span>
-                          </button>
-                        <span class="action-chip ms-2">
-                            <img src="{% static 'image/repost.png' %}" alt="Repost">
-                            {{ publication.reposts_count }}
-                        </span>
+                           <button data-id="{{ publication.id }}" class="open-comments">
+                                <span class="action-chip ms-2">
+                                    <img src="{% static 'image/comments.png' %}" alt="Comments">
+                                    {{ publication.comments_count }}
+                                </span>
+                            </button>
                     </div>
                     <span class="publication-time">{{ publication.created_at|timesince }} назад</span>
                 </div>
@@ -125,7 +123,7 @@
         <div class="tab-pane fade" id="topics" role="tabpanel" aria-labelledby="topics-tab">
             {% for topic in topics %}
             <div class="publication-item pb-3 border-bottom">
-                <strong>{{ topic}}</strong>
+                <a href="{% url "publications:publication-topic" topic %}"><strong>{{ topic}}</strong></a>
             </div>
             {% empty %}
             <p>Тем пока нет</p>
@@ -186,36 +184,8 @@ document.querySelectorAll('.delete-publication').forEach(button => {
     });
 });
 
-// Лайки публикаций
-document.querySelectorAll('.like-publication').forEach(button => {
-    button.addEventListener('click', function () {
-        const publicationId = this.dataset.id;
-        const buttonElement = this;
 
-        fetch("{% url 'publications:publication-like' %}", {
-            method: 'POST',
-            headers: {'X-CSRFToken': csrftoken,'Content-Type': 'application/json'},
-            body: JSON.stringify({ publication_id: publicationId })
-        })
-        .then(response => response.json())
-        .then(data => {
-            const likesSpan = buttonElement.querySelector('.action-chip');
-            const like_img = buttonElement.querySelector('img');
-            let count = parseInt(likesSpan.textContent) || 0;
 
-            if (data.status === 'ok') {
-                count += 1;
-                likesSpan.textContent = count;
-                like_img.src = "{% static 'image/active-like.png' %}";
-            } else if (data.status === 'not_ok') {
-                count = Math.max(count - 1, 0);
-                likesSpan.textContent = count;
-                like_img.src = "{% static 'image/like.png' %}";
-            }
-        })
-        .catch(error => console.error(error));
-    });
-});
 // лайки публикаций 
 document.body.addEventListener('click', function(e) {
     const button = e.target.closest('.like-publication');
@@ -265,7 +235,7 @@ document.body.addEventListener('submit', function(e) {
     const text = input.value.trim();
     if (!text) return;
 
-    const publicationId = form.dataset.publicationId;
+    const userNickname = form.dataset.senderId;
     const userDate = new Date().toLocaleString('ru-RU');
 
     fetch("{% url 'publications:add-comments' %}", {
@@ -274,34 +244,38 @@ document.body.addEventListener('submit', function(e) {
             'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ text: text, publication_id: publicationId })
+        body: JSON.stringify({ text: text, publication_id: form.dataset.publicationId })
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'ok') {
-            const commentsList = document.querySelector('#modal-comments');
+            // Контейнер комментариев для текущей модалки
+            const modalBody = form.closest('.publication-modal-content');
+            const commentsList = modalBody.querySelector('#modal-comments');
+            if (!commentsList) return;
 
-            // Удаляем сообщение "Комментариев пока нет"
-            const emptyMsg = commentsList.querySelector('p');
-            if (emptyMsg && !emptyMsg.classList.contains('comment')) emptyMsg.remove();
+            // Удаляем только сообщение "Комментариев пока нет"
+            const emptyMsg = commentsList.querySelector('p.no_comment');
+            if (emptyMsg) emptyMsg.remove();
 
-            // Создаём новый комментарий
-            const newComment = document.createElement('div');
-            newComment.classList.add('comment', 'border-bottom', 'py-2');
-            newComment.innerHTML = `
-                <p>${text}</p>
-                <small class="text-muted">${userDate}</small>
-            `;
 
-            commentsList.append(newComment);
+            // Вставляем новый комментарий в конец списка
+            commentsList.insertAdjacentHTML('beforeend', `
+                <div class="comment border-bottom py-2">
+                    <strong>${userNickname}</strong>
+                    <p>${text}</p>
+                    <small class="text-muted">${userDate}</small>
+                </div>
+            `);
 
+            // Очищаем поле ввода
             input.value = '';
         } else {
             console.error('Ошибка при отправке комментария');
         }
     })
     .catch(error => console.error(error));
-});
+})
 </script>
 
 {% endblock content %}

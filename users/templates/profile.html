@@ -82,10 +82,6 @@
                             {{ publication.comments_count }}
                         </button>
                         </span>
-                        <span class="action-chip ms-2">
-                            <img src="{% static 'image/repost.png' %}" alt="Repost">
-                            {{ publication.comments_count }}
-                        </span>
                     </div>
 
                     <span class="publication-time">{{ publication.created_at|timesince }} назад</span>
@@ -122,10 +118,11 @@
                             {% endif %}
                             <span class="action-chip">{{ publication.liked_by.count }}</span>
                         </button>
-                        <span class="action-chip ms-2">
+                        <button data-id="{{ publication.id }}" class="open-comments btn btn-link p-0">
+                            <span class="action-chip ms-2">
                             <img src="{% static 'image/comments.png' %}" alt="Comments">
                             {{ publication.comments_count }}
-                        </span>
+                        </button>
                     </div>
 
                     <span class="publication-time">{{ publication.created_at|timesince }} назад</span>
@@ -239,7 +236,8 @@ document.body.addEventListener('submit', function(e) {
     const text = input.value.trim();
     if (!text) return;
 
-    const publicationId = form.dataset.publicationId;
+    const userNickname = form.dataset.sender;
+    
     const userDate = new Date().toLocaleString('ru-RU');
 
     fetch("{% url 'publications:add-comments' %}", {
@@ -248,33 +246,37 @@ document.body.addEventListener('submit', function(e) {
             'X-CSRFToken': form.querySelector('[name=csrfmiddlewaretoken]').value,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ text: text, publication_id: publicationId })
+        body: JSON.stringify({ text: text, publication_id: form.dataset.publicationId })
     })
     .then(response => response.json())
     .then(data => {
         if (data.status === 'ok') {
-            const commentsList = document.querySelector('#modal-comments');
+            // Контейнер комментариев для текущей модалки
+            const modalBody = form.closest('.publication-modal-content');
+            const commentsList = modalBody.querySelector('#modal-comments');
+            if (!commentsList) return;
 
-            // Удаляем сообщение "Комментариев пока нет"
-            const emptyMsg = commentsList.querySelector('p');
-            if (emptyMsg && !emptyMsg.classList.contains('comment')) emptyMsg.remove();
+            // Удаляем только сообщение "Комментариев пока нет"
+            const emptyMsg = commentsList.querySelector('p.no_comment');
+            if (emptyMsg) emptyMsg.remove();
 
-            // Создаём новый комментарий
-            const newComment = document.createElement('div');
-            newComment.classList.add('comment', 'border-bottom', 'py-2');
-            newComment.innerHTML = `
-                <p>${text}</p>
-                <small class="text-muted">${userDate}</small>
-            `;
 
-            commentsList.append(newComment);
+            // Вставляем новый комментарий в конец списка
+            commentsList.insertAdjacentHTML('beforeend', `
+                <div class="comment border-bottom py-2">
+                    <strong>${userNickname}</strong>
+                    <p>${text}</p>
+                    <small class="text-muted">${userDate}</small>
+                </div>
+            `);
 
+            // Очищаем поле ввода
             input.value = '';
         } else {
             console.error('Ошибка при отправке комментария');
         }
     })
     .catch(error => console.error(error));
-});
+})
 </script>
 {% endblock content %}

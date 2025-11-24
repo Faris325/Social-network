@@ -14,7 +14,6 @@ from django.db.models import When
 from django.db.models import F
 from django.db.models import Value
 
-import user_messages
 from user_messages.models import Messages
 from django.views.generic import CreateView
 from user_messages.forms import MessageForm

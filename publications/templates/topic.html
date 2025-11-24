@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% load static %}
+{% load tz %}
+
+{% block css %}
+<link rel="stylesheet" href="{% static 'css/publications.css' %}">
+{% endblock css %}
+
+{% block content %}
+
+<!-- Публикации по темам -->
+<div class="profile-container mt-5">
+    <div class="tab-content mt-3" id="publicationsTabContent">
+        <div class="tab-pane fade show active" id="popular" role="tabpanel" aria-labelledby="popular-tab">
+            {% for publication in topic_publications %}
+            <div data-id="{{publication.id}}" class="publication-item pb-3 border-bottom position-relative">
+                {% if user == publication.user %}
+                    <button data-id="{{ publication.id }}" class="delete-publication btn btn-sm btn-light position-absolute top-0 end-0" style="font-size: 16px;">&#10006;</button>
+                {% endif %}
+                <div class="publication-header mb-2">
+                    <strong>Тема: {{ publication.topic }}</strong>
+                </div>
+                <p>{{ publication.text }}</p>
+                {% if publication.media %}
+                <div class="publication-media mt-2">
+                    {% if publication.media.name|lower|slice:"-4:" in ".mp4.avi" %}
+                        <video controls class="img-fluid rounded">
+                            <source src="{{ publication.media.url }}" type="video/mp4">
+                            Ваш браузер не поддерживает воспроизведение видео.
+                        </video>
+                    {% else %}
+                        <img src="{{ publication.media.url }}" alt="Publication media" class="img-fluid rounded">
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="publication-actions mt-2 d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <button data-id="{{ publication.id }}" class="like-publication">
+                            {% if user in publication.liked_by.all %}
+                                <img class="like_img" src="{% static 'image/active-like.png' %}" alt="Like">
+                            {% else %}
+                                <img class="dislike_img" src="{% static 'image/like.png' %}" alt="Like">
+                            {% endif %}
+                            <span class="action-chip">{{ publication.liked_by.count }}</span>
+                        <button data-id="{{ publication.id }}" class="open-comments">
+                                <span class="action-chip ms-2">
+                                    <img src="{% static 'image/comments.png' %}" alt="Comments">
+                                    {{ publication.comments_count }}
+                                </span>
+                            </button>
+                    </div>
+                    <span class="publication-time">{{ publication.created_at|timesince }} назад</span>
+                </div>
+            </div>
+            {% empty %}
+            <p>Публикаций нет</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock content%}

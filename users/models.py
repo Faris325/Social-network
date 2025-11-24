@@ -17,7 +17,7 @@ class User(AbstractUser):
     """
 
     username = None
-    nickname= models.CharField(
+    nickname = models.CharField(
         max_length=28, validators=[MinLengthValidator(3)]
         )
     phone_number = models.CharField(
