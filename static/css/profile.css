@@ -1,5 +1,5 @@
 .profile-container {
-    width: 900px; /* было 700px */
+    width: 56.25rem; 
     margin: 0 auto;
     font-family: Arial, sans-serif;
 }
@@ -7,41 +7,40 @@
 .profile-header {
     display: flex;
     align-items: center;
-    margin-top: 30px; /* было 20px */
+    margin-top: 1.875rem; 
 }
 
 .profile-image {
-    width: 120px; /* было 80px */
-    height: 120px; /* было 80px */
+    width: 7.5rem; 
+    height: 7.5rem;
     border-radius: 50%;
     object-fit: cover;
 }
 
 .profile-info h1 {
     margin: 0;
-    font-size: 30px; /* было 24px */
+    font-size: 1.875rem; 
 }
 
 .last-seen {
     color: #888;
-    font-size: 16px; /* было 14px */
-    margin-top: 8px; /* было 5px */
+    margin-top: 0.5rem; 
 }
 
 .profile-tabs {
     display: flex;
-    gap: 20px; /* было 15px */
-    margin-top: 30px; /* было 20px */
+    gap: 1.25rem; 
+    margin-top: 1.875rem; 
 }
 
 .profile-tabs .tab {
     background: none;
     border: none;
-    padding: 12px 20px; /* было 10px 15px */
+    padding: 0.75rem 1.25rem; 
     cursor: pointer;
     font-weight: bold;
-    border-radius: 12px; /* было 10px */
-    font-size: 16px; /* увеличил размер текста */
+    border-radius: 0.75rem; 
+    font-size: 1rem; 
 }
 
 .profile-tabs .tab.active {
@@ -49,22 +48,22 @@
 }
 
 .profile-post-form {
-    margin-top: 30px; /* было 20px */
+    margin-top: 1.875rem; 
     display: flex;
     flex-direction: column;
 }
 
 .form-textarea {
     width: 100%;
-    border-radius: 12px; /* было 10px */
-    padding: 15px; /* было 10px */
+    border-radius: 0.75rem; 
+    padding: 0.9375rem;
     border: 1px solid #ccc;
     resize: none;
-    font-size: 16px; /* увеличен шрифт */
+    font-size: 1rem; 
 }
 
 .form-footer {
-    margin-top: 15px; /* было 10px */
+    margin-top: 0.9375rem; 
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -72,29 +71,29 @@
 
 .publication-item {
     border-bottom: 1px solid #ddd;
-    padding: 20px 0; /* было 15px 0 */
-    font-size: 16px; /* общий размер текста увеличен */
+    padding: 1.25rem 0; 
+    font-size: 1rem; 
 }
 
 .publication-header {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px; /* было 10px */
-    font-size: 18px; /* увеличен шрифт темы */
+    margin-bottom: 0.9375rem; 
+    font-size: 1.125rem; 
 }
 
 .publication-media img {
     max-width: 100%;
-    border-radius: 12px; /* было 10px */
-    margin-top: 15px; /* было 10px */
+    border-radius: 0.75rem; 
+    margin-top: 0.9375rem; 
 }
 
 .publication-actions {
     display: flex;
-    gap: 20px; /* было 15px */
-    margin-top: 15px; /* было 10px */
+    gap: 1.25rem; 
+    margin-top: 0.9375rem;
     color: #555;
-    font-size: 16px; /* было 14px */
+    font-size: 1rem; 
 }
 
 .nav-tabs {
@@ -103,13 +102,12 @@
 
 .nav-tabs .nav-link {
     border: none;
-
-    border-radius: 25px; /* было 20px */
-    margin-right: 12px; /* было 8px */
+    border-radius: 1.5625rem; 
+    margin-right: 0.75rem; 
     color: #333;
     font-weight: 500;
-    font-size: 18px; /* увеличен текст */
-    padding: 4px 18px; /* увеличен padding */
+    font-size: 1.125rem; 
+    padding: 0.25rem 1.125rem; 
 }
 
 .nav-tabs .nav-link.active {
@@ -119,11 +117,11 @@
 .action-chip {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background-color: #e0e0e0; /* светло-серый фон */
-    border-radius: 20px;       /* овальная форма */
-    padding: 6px 12px;
-    font-size: 15px;
+    gap: 0.375rem; 
+    background-color: #e0e0e0;
+    border-radius: 1.25rem; 
+    padding: 0.375rem 0.75rem; 
+    font-size: 0.9375rem; 
     color: #333;
     font-weight: 500;
     cursor: default;
@@ -131,43 +129,43 @@
 }
 
 .action-chip:hover {
-    background-color: #cfcfcf; /* немного темнее при наведении */
+    background-color: #cfcfcf;
 }
 
 .action-chip img {
-    width: 20px;
-    height: 20px;
+    width: 1.25rem; 
+    height: 1.25rem;
     vertical-align: middle;
 }
+
 .like-publication {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    background-color: #e0e0e0;  /* фон кнопки */
+    gap: 0.375rem; 
+    background-color: #e0e0e0;
     border: none;
-    border-radius: 20px;         /* округлые края */
-    padding: 6px 12px;
+    border-radius: 1.25rem; 
+    padding: 0.375rem 0.75rem; 
     cursor: pointer;
-    font-size: 15px;
+    font-size: 0.9375rem; 
     font-weight: 500;
     color: #333;
     transition: background-color 0.2s ease;
 }
 
 .like-publication:hover {
-    background-color: #cfcfcf;   /* при наведении чуть темнее */
+    background-color: #cfcfcf;
 }
 
 .like-publication img {
-    width: 20px;   /* размер картинки лайка */
-    height: 20px;
+    width: 1.25rem; 
+    height: 1.25rem;
     object-fit: cover;
     vertical-align: middle;
 }
 
 .like-publication .action-chip {
-    background: none;   /* убираем фон у span */
+    background: none;
     padding: 0;
     gap: 0;
 }
-

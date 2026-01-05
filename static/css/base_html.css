@@ -5,6 +5,10 @@
   font-family: "Segoe UI", sans-serif;
 }
 
+html {
+  font-size: 16px;
+}
+
 body {
   background: #fafafa;
   color: #222;
@@ -27,10 +31,10 @@ ul, ol {
 
 .menu {
   margin-top: 1rem;
-  margin-right: 20px;
+  margin-right: 1.25rem; 
 }
 
-.up-panel{
+.up-panel {
   display: flex;
 }
 
@@ -39,32 +43,32 @@ ul, ol {
   align-items: center;
   justify-content: space-between;
   background: #fff;
-  padding: 10px 10px 10px 0;
+  padding: 0.625rem 0.625rem 0.625rem 0; 
   border-bottom: 1px solid #ddd;
   position: sticky;
   top: 0;
   z-index: 10;
-  height: 80px; 
+  height: 5rem; 
 }
 
 .menu img {
-  height: 21px; 
+  height: 1.3125rem; 
   width: auto;
-  margin-right: 5px;
-  padding-left: 5px;
-  margin-bottom: 3px;   
+  margin-right: 0.3125rem; 
+  padding-left: 0.3125rem;
+  margin-bottom: 0.1875rem; 
 }
 
 .logo img {
-  height: 60px; 
-  width: auto;   
-  object-fit: contain; 
+  height: 3.75rem; 
+  width: auto;
+  object-fit: contain;
   display: block;
-  margin-left: 15px;
+  margin-left: 0.9375rem; 
 }
 
 .menu-toggle {
-  font-size: 22px;
+  font-size: 1.375rem; 
   background: none;
   border: none;
   cursor: pointer;
@@ -75,53 +79,53 @@ ul, ol {
   display: flex;
   min-height: 100vh; 
 }
+
 .nav-icon {
-  width: 24px;      
-  height: 24px;     
+  width: 1.5rem; 
+  height: 1.5rem;
   object-fit: contain;
-  flex-shrink: 0;   
+  flex-shrink: 0;
   vertical-align: middle;
 }
 
-.make-publications img{
-  margin-bottom: 2px;
+.make-publications img {
+  margin-bottom: 0.125rem; 
 }
 
-/* Левая панель */
 .sidebar {
-    position: fixed;
-    top: 80px;
-    width: 240px;
-    height: calc(100vh - 80px);
-    background: #fff;
-    border-right: 1px solid #ddd;
-    padding: 15px 0 15px 0px;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between; 
-    overflow-y: auto;
+  position: fixed;
+  top: 5rem; 
+  width: 15rem; 
+  height: calc(100vh - 5rem);
+  background: #fff;
+  border-right: 1px solid #ddd;
+  padding: 0.9375rem 0 0.9375rem 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow-y: auto;
 }
 
 .sidebar ul {
   list-style: none;
-  padding-left: 15px;
+  padding-left: 0.9375rem; 
 }
 
 .sidebar li {
-  margin-bottom: 10px;
+  margin-bottom: 0.625rem; 
   cursor: pointer;
-  font-size: 21px;
-  border-radius: 6px;
+  font-size: 1.3125rem; 
+  border-radius: 0.375rem; 
   transition: background 0.2s ease, transform 0.1s ease;
 }
 
 .sidebar li.active a {
   font-weight: bold;
-  background: #D9D9D9; 
-  border-radius: 6px;
+  background: #D9D9D9;
+  border-radius: 0.375rem;
   display: block;
   color: #000;
-  padding:7px 7px 7px 0;
+  padding: 0.4375rem 0.4375rem 0.4375rem 0; 
 }
 
 .resources {
@@ -129,54 +133,48 @@ ul, ol {
 }
 
 .resources h4 {
-  margin-bottom: 8px;
-  font-size: 20px;
+  margin-bottom: 0.5rem; 
+  font-size: 1.25rem;
   color: #555;
-  padding-left: 15px;
+  padding-left: 0.9375rem;
 }
 
-
-.settings {
-  margin-bottom: 8px;
-  font-size: 20px;
+.settings, .make-publications {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem; 
   position: relative;
 }
-
-.make-publications {
-  margin-bottom: 8px;
-  font-size: 20px;
-  position: relative;
-}
-
 
 .settings a {
   display: flex;
   align-items: center;
-  gap: 3px; 
+  gap: 0.1875rem; 
   text-decoration: none;
   color: inherit;
 }
 
 .settings img {
-  margin-right: 3px; 
-  width: 20px; 
-  height: 20px;
+  margin-right: 0.1875rem; 
+  width: 1.25rem; 
+  height: 1.25rem;
 }
+
 .settings-dropdown {
   display: none;
-  position: fixed; 
-  top: 80px;       
-  right: 0px;     
+  position: fixed;
+  top: 5rem;
+  right: 0;
   background: #fff;
   border: 1px solid #ddd;
-  border-radius: 6px;
-  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  border-radius: 0.375rem;
+  box-shadow: 0 0.25rem 0.375rem rgba(0,0,0,0.1); 
   z-index: 1000;
-  min-width: 200px;
+  min-width: 12.5rem; 
 }
+
 .settings-dropdown a {
   display: block;
-  padding: 10px;
+  padding: 0.625rem; 
   color: #000;
   text-decoration: none;
   transition: background 0.2s;
@@ -184,34 +182,34 @@ ul, ol {
 
 .settings-dropdown a:hover {
   background: #f0f0f0;
-  
 }
 
 .profile-post-form textarea {
-    resize: none;
+  resize: none;
 }
 
 .publication {
-    padding: 6px 18px;
-    font-size: 14px;
+  padding: 0.375rem 1.125rem;
+  font-size: 0.875rem; 
 }
 
 #topicInput {
-    border-radius: 6px;
+  border-radius: 0.375rem; 
 }
 
 #topicInput::placeholder {
-    color: #999;
-    font-style: italic;
+  color: #999;
+  font-style: italic;
 }
+
 .file-add-label {
   cursor: pointer;
   transition: transform 0.2s ease, opacity 0.2s ease;
 }
 
 .file-add-icon {
-  width: 40px;
-  height: 40px;
+  width: 2.5rem; 
+  height: 2.5rem;
   object-fit: contain;
   opacity: 0.8;
 }
@@ -221,38 +219,28 @@ ul, ol {
   opacity: 1;
 }
 
-.publication {
-  padding: 6px 18px;
-  font-size: 14px;
-}
-
-.profile-post-form textarea {
-  resize: none;
-}
-
 .tall-modal .modal-content {
-  height: 500px;
-
+  height: 31.25rem; 
 }
 
 button.logout {
   display: block;
-  font-size: 18px;
+  font-size: 1.125rem; 
   color: #555;
-  padding: 10px;
+  padding: 0.625rem; 
   text-decoration: none;
-  border: none;          
-  background: none;      
-  width: 100%;           
-  text-align: left;      
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
   border-top: 1px solid #ddd;
-  cursor: pointer;       
+  cursor: pointer;
 }
 
 button.logout:hover {
   color: #000;
   background-color: #f0f0f0;
-  border-radius: 5px;
+  border-radius: 0.3125rem; 
 }
 
 .logout {
@@ -261,16 +249,15 @@ button.logout:hover {
 }
 
 .content {
-  margin-left: 230px;
+  margin-left: 14.375rem;
   flex: 1;
   background: #f9f9f9;
-  padding: 40px;
+  padding: 2.5rem; 
   display: flex;
   justify-content: center;
   align-items: flex-start;
 }
 
-/* Мобильная версия */
 @media (max-width: 768px) {
   .layout {
     flex-direction: column;
@@ -282,28 +269,25 @@ button.logout:hover {
 
   .header {
     justify-content: flex-start;
-    gap: 10px;
+    gap: 0.625rem; 
   }
 
   .logo {
     margin-left: auto;
-    font-size: 18px;
+    font-size: 1.125rem; 
   }
 
-  /* Скрываем панель изначально */
   .sidebar {
-    left: -250px; /* скрыта за экраном */
+    left: -15.625rem; 
     transition: left 0.3s ease;
   }
 
-  /* Когда активна — показывает */
   .sidebar.active {
     left: 0;
   }
 
   .content {
     margin-left: 0;
-    padding: 15px;
+    padding: 0.9375rem; 
   }
 }
-
