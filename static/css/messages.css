@@ -41,6 +41,7 @@ html {
   align-items: center;
   gap: 0.625rem; 
   cursor: pointer;
+  padding: 1rem;
   border-bottom: 0.0625rem solid #dee2e6;
   transition: background-color 0.2s ease;
 }

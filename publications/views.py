@@ -20,6 +20,9 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 from django.template.loader import render_to_string
 from django.db.models import Count
+from django.contrib.postgres.search import SearchVector
+from django.contrib.postgres.search import SearchQuery
+from django.contrib.postgres.search import SearchRank
 
 from publications.forms import UserRegisterForm
 from publications.models import Publications
@@ -133,9 +136,11 @@ class PublicationComments(View):
     def post(self, request):
         data = json.loads(request.body)
 
-        publication = Publications.objects.get(id = data['publication_id'])
+        publication = Publications.objects.get(id=data['publication_id'])
 
-        Comments.objects.create(publication=publication, text= data['text'], user=request.user)
+        Comments.objects.create(publication=publication, text=data['text'], 
+                                user=request.user
+                                )
 
         return JsonResponse({'status': 'ok'})
     
@@ -151,3 +156,43 @@ class PublicationTopic(View):
             'topic_publications': topic_publications
         }
         return render(request, "topic.html", context)
+    
+class PublicationTopicSearch(View):
+    """Для поиска тем"""
+    def get(self,request, **kwargs):
+        
+        search_topic = SearchQuery(request.GET.get('q'))
+        search_query = (Publications.objects.annotate(
+            search=SearchVector("text","topic"),
+            rank=SearchRank(SearchVector("text","topic"),search_topic))
+            .filter(search=search_topic).order_by('-rank'))
+
+        topics = search_query.values_list('topic',flat=True)
+
+        friends_id = list(Friends.objects.filter(
+            Q(sender=self.request.user, application_status='accepted')|
+            Q(receiver=self.request.user, application_status='accepted')
+            ).annotate(friend_id = Case(
+                When(sender=self.request.user, then=F('receiver_id')),
+                When(receiver=self.request.user, then=F('sender_id')),
+                output_field=IntegerField()
+            )
+            ).values_list('friend_id', flat=True))
+
+
+        firends_publication = (Publications.objects.filter(user__in=friends_id)
+                        .select_related("user").order_by('-created_at')
+                        )
+        
+        popular_publications = (Publications.objects.
+                                annotate(likes=Count('liked_by'))
+                                .order_by('-likes'))
+
+        context = {
+            'topics': topics,
+            'firends_publication':firends_publication,
+            'popular_publications':popular_publications, 
+            'topics_tab_active':True,
+        }
+
+        return render(request, "publications.html", context)

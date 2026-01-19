@@ -11,3 +11,9 @@ class Messages(models.Model):
         upload_to = 'publications_messages', blank=True, 
         null = True )
     
+    class Meta:
+        db_table = 'messages'
+        indexes = [
+            models.Index(
+                fields=['sender','recipient'],name='idx_friends_sender_recipient')
+        ]

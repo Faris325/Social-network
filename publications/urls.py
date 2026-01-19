@@ -16,6 +16,9 @@ urlpatterns = [
      path('publications-topic/<str:topic>', views.PublicationTopic.as_view(), 
      name='publication-topic'
      ),
+     path('publications-search', views.PublicationTopicSearch.as_view(), 
+     name='search-topics'
+     ),
     path('comments/', views.PublicationComments.as_view(), 
      name='publication-comments'
      ),

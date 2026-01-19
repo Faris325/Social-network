@@ -37,7 +37,8 @@ class User(AbstractUser):
     
     time_zone = models.CharField(
         blank = True, null = True, 
-        default = 'UTC')
+        default = 'UTC'   
+    )
     
 
     

@@ -1,4 +1,5 @@
 from django.db import models
+
 from users.models import User
 
 class Friends(models.Model):
@@ -18,7 +19,13 @@ class Friends(models.Model):
         related_name = 'receiver'
         )
     application_status = models.CharField(
-        max_length = 15, choices=STATUS_CHOISES)
+        max_length = 15, choices=STATUS_CHOISES,
+        db_index=True
+        )
 
     class Meta:
         db_table = 'friends'
+        indexes = [
+            models.Index(
+                fields=['sender','receiver'],name='idx_friends_sender_receiver')
+        ]
