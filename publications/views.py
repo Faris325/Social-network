@@ -163,7 +163,7 @@ class PublicationTopicSearch(View):
         
         search_topic = SearchQuery(request.GET.get('q'))
         search_query = (Publications.objects.annotate(
-            search=SearchVector("text","topic"),
+            search=SearchVector("text","topic",config="simple"),
             rank=SearchRank(SearchVector("text","topic"),search_topic))
             .filter(search=search_topic).order_by('-rank'))
 

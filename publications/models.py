@@ -5,7 +5,6 @@ from users.models import User
 
 from django.contrib.postgres.indexes import GinIndex
 from django.contrib.postgres.search import SearchVector
-from django.contrib.postgres.search import SearchVectorField
 
 class Publications(models.Model):
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, blank=True, 
