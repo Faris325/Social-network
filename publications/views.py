@@ -1,8 +1,12 @@
 """
-    Модуль с контроллерами приложения publications
+Модуль с контроллерами приложения publications
 
-    PublicationView - контроллер для отображения и создания публикаций
-    PublicationDelete - контроллер для удаления публикаций
+PublicationView - контроллер для отображения и создания публикаций
+PublicationDelete - контроллер для удаления публикаций
+PublicationLike - контроллер для лайка публикаций 
+PublicationComments - контроллер для отображения публикаций
+PublicationsTopic - контроллер для вывда публикаций по темам
+PublicationTopicSearch - контроллер для поиска тем
 """
 import json
 from multiprocessing import context
@@ -31,9 +35,7 @@ from friends.models import Friends
 
 
 class PublicationsView(LoginRequiredMixin, CreateView):
-
-    """Контроллер для отображения и создания публикаций
-    """ 
+    """Контроллер для отображения и создания публикаций""" 
     
     form_class = UserRegisterForm
     template_name = 'publications.html'
@@ -42,21 +44,21 @@ class PublicationsView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         """Метод для валидации объекта формы
 
-           Добавляет в атрибут объекта instance объект модели user, чтобы
-           в бд сохранилось id пользователя который сделал публикацию. 
+        Добавляет в атрибут объекта instance объект модели user, чтобы
+        в бд сохранилось id пользователя который сделал публикацию. 
         """
         form.instance.user = self.request.user
         return super().form_valid(form)
 
     def get_context_data(self, **kwargs):
-        """
-        Добавляет в контекст публикации пользователя и его друзей.
+        """Добавляет в контекст публикации пользователя и его друзей.
 
         1. Получает список id друзей 
            пользователя.
         2. Получает публикации которые относятся к этим id 
         3. Добавляет публикации в контекст для отображения в шаблоне.
         """
+
         context = super().get_context_data(**kwargs)
     
         friends_id = list(Friends.objects.filter(
@@ -67,7 +69,8 @@ class PublicationsView(LoginRequiredMixin, CreateView):
                 When(receiver=self.request.user, then=F('sender_id')),
                 output_field=IntegerField()
             )
-            ).values_list('friend_id', flat=True))
+            ).values_list('friend_id', flat=True)
+        )
 
 
         firends_publication = (Publications.objects.filter(user__in=friends_id)
@@ -89,9 +92,7 @@ class PublicationsView(LoginRequiredMixin, CreateView):
 
 
 class PublicationDelete(View):
-
-    """Контроллер для удаления публикации
-    """
+    """Контроллер для удаления публикации"""
 
     def post(self, request):
         data = json.loads(request.body)
@@ -102,6 +103,8 @@ class PublicationDelete(View):
 
 
 class PublicationLike(View):
+    """Контроллер для лайка к публикациям """
+
     def post(self,request):
         data = json.loads(request.body)
         publication = Publications.objects.get(id = data['publication_id'])
@@ -116,12 +119,13 @@ class PublicationLike(View):
 
 class PublicationComments(View):
     """Контроллер для отображения комметариев"""
+
     def get(self,request):
         data = request.GET.get('publication_id')
-
         publication = Publications.objects.get(id = data)
 
-        publication_comments = publication.comments.all().select_related('user').order_by('created_at')
+        publication_comments = (publication.comments.all()
+                                .select_related('user').order_by('created_at'))
 
         context = {
             'publication':publication,
@@ -147,6 +151,7 @@ class PublicationComments(View):
 
 class PublicationTopic(View):
     """Для вывода публикаций по темам"""
+
     def get(self,request, **kwargs):
         
         topic_publications = (Publications.objects.
@@ -158,7 +163,8 @@ class PublicationTopic(View):
         return render(request, "topic.html", context)
     
 class PublicationTopicSearch(View):
-    """Для поиска тем"""
+    """Контроллер для поиска тем"""
+
     def get(self,request, **kwargs):
         
         search_topic = SearchQuery(request.GET.get('q'))

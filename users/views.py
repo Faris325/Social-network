@@ -6,13 +6,13 @@
    UserLogoutView - Контроллер для выхода из системы
    UserChangePassword - Контроллеры для изменения пароля
    UserChangeData - Контроллер для изменения данных пользователя
-   UserFriends Контроллер для отображения профилей
+   Users - Контроллер для отображения профилей
 
 """
 
 
 from django.http import HttpResponseRedirect
-from django.shortcuts import redirect, render
+from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.contrib import auth
 from django.views import View
@@ -45,7 +45,7 @@ class UserLoginView(FormView):
 
     template_name = 'authorization.html'
     form_class = UserLoginForm
-    success_url = reverse_lazy('users:profile') # reverse_lazy — это функция, которая используется для получения URL по имени маршрута, но делает это не немедленно, а "лениво", то есть только тогда, когда он будет использоваться, например, при перенаправлении.
+    success_url = reverse_lazy('users:profile') 
 
     def get(self, request, *args, **kwargs):
         """Зарегистрированный пользователь перенаправляется на профиль"""
@@ -130,7 +130,6 @@ class UserRegistrationView(CreateView):
     
 
 class UserProfileView(LoginRequiredMixin, View):
-
     """Контроллер для отображения профиля""" 
 
     def get(self, request):
@@ -140,7 +139,6 @@ class UserProfileView(LoginRequiredMixin, View):
         
         liked_publications = Publications.objects.filter(liked_by=request.user)
                             
-                                
 
         context = {
             'title': 'Профиль',
@@ -153,7 +151,6 @@ class UserProfileView(LoginRequiredMixin, View):
 
      
 class UserLogoutView(LoginRequiredMixin, LogoutView):
-    
     """Контроллер для выхода пользователя из системы
 
        Выход из системы осуществляется через метод POST (для безопасности). 
@@ -166,7 +163,6 @@ class UserLogoutView(LoginRequiredMixin, LogoutView):
 
 
 class UserChangePassword(LoginRequiredMixin, PasswordChangeView):
-
     """Контроллер для изменения пароля клиента"""
 
     template_name = 'profile.html'
@@ -175,7 +171,6 @@ class UserChangePassword(LoginRequiredMixin, PasswordChangeView):
 
 
 class UserChangeData(LoginRequiredMixin, UpdateView):
-
     """Контроллер для изменения данных пользователя """
 
     model = User
@@ -208,7 +203,6 @@ class UserChangeData(LoginRequiredMixin, UpdateView):
 
 
 class Users(LoginRequiredMixin, ListView):
-
     """Контроллер для отображения профилей
 
        Имеет следующие атрибуты: 
@@ -223,7 +217,6 @@ class Users(LoginRequiredMixin, ListView):
        и пользователи которым была отправлена заявка
 
     """
-
 
     context_object_name = 'query_users'
     template_name = 'users.html'
@@ -245,9 +238,8 @@ class Users(LoginRequiredMixin, ListView):
            Эти списки будут использованы в шаблоне следующим образом: 
            Например если выводимый пользователь есть в списке sent_freiends, то
            будет надпись "отпарвлена заявка" 
+
         """
-
-
         sent_friends = list(Friends.objects.filter(
             sender=self.request.user, application_status = 'pending'
             ).values_list('receiver_id',flat=True)

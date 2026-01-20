@@ -91,15 +91,14 @@ ASGI_APPLICATION = "sh.asgi.application"  # файл, который обраб�
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv('POSTGRES_DB'),      
-        'USER': os.getenv('POSTGRES_USER'),
-        'PASSWORD': os.getenv('POSTGRES_PASSWORD'),
-        'HOST': 'localhost',
-        'PORT': '5433',
+        'NAME': os.environ.get('POSTGRES_DB'),       
+        'USER': os.environ.get('POSTGRES_USER'), 
+        'PASSWORD': os.environ.get('POSTGRES_PASSWORD'), 
+        'HOST': os.environ.get('POSTGRES_HOST'),     
+        'PORT': os.environ.get('POSTGRES_PORT'),  
     }
 }
 
@@ -171,7 +170,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("redis-server", 6379)]
+            "hosts": [("redis", 6379)]
         },
     },
 }

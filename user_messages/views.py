@@ -1,10 +1,11 @@
 """
-    Контроллер приложения user_messages
+Модуль с контроллерами приложения user_messages
 
-    UserMessagesView - Контроллер для отображения диалогов пользователя
-    UserMessageView - Контроллер для отображения конкретного диалога
+UserMessagesView - Контроллер для отображения диалогов пользователя
+UserMessageView - Контроллер для отображения конкретного диалога
 
 """
+
 from django.shortcuts import render
 from django.db.models import Q
 from django.views.generic import View
@@ -20,7 +21,6 @@ from user_messages.forms import MessageForm
 from users.models import User
 
 class UserMessagesView(LoginRequiredMixin, View):
-
     """Контроллер для отображения диалогов пользователя"""
     
     def get(self,request):
@@ -50,8 +50,8 @@ class UserMessagesView(LoginRequiredMixin, View):
 
 
 class UserMessageView(LoginRequiredMixin, CreateView):
-      
       """Добавляет в контекст данные о сообщениях пользователя:
+
       - список всех собеседников (sender или recipient),
       - сообщения между текущим пользователем и выбранным пользователем 
       (по user_id).
@@ -88,9 +88,9 @@ class UserMessageView(LoginRequiredMixin, CreateView):
         
 
         context['users'] = users
-        context['chat_user'] = True # Активирует icnlude с сообщениями
+        context['chat_user'] = True  # Активирует icnlude с сообщениями
         context['personal_messages'] = personal_messages
-        context['dialog_user'] = User.objects.get(id = self.kwargs['user_id']) # Будет ли ошибка если пользователь удалится? 
+        context['dialog_user'] = User.objects.get(id = self.kwargs['user_id']) 
         return context
       
       def form_valid(self, form):

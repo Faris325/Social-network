@@ -2,10 +2,7 @@ from django import forms
 from publications.models import Publications
 
 class UserRegisterForm(forms.ModelForm):
-
-    """Форма для создания публикации 
-
-    """
+    """Форма для создания публикации"""
 
     class Meta:
         model = Publications

@@ -1,3 +1,6 @@
+"""Потребитель для уведомлений о заявке в друзья"""
+
+
 import json
 
 from channels.generic.websocket import AsyncWebsocketConsumer
@@ -21,7 +24,7 @@ class FriendConsumer(AsyncWebsocketConsumer):
 
      async def incomming_friends(self, event):
         # Отправляем сообщение на WebSocket
-        await self.send(text_data=json.dumps({
+        await self.send(text_data=json.dumps({ 
             "image": event["image"],
             "sender_id": event["sender_id"],
             "user_name":event["user_name"]
