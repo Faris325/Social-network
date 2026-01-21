@@ -258,7 +258,6 @@
 const FriendSocket = new WebSocket("ws://" + window.location.host + "/ws/friends/");
 
 
-
 FriendSocket.onmessage = function(event) {
     const incoming = document.querySelector(".incoming-list-group"); 
     const data = JSON.parse(event.data); 

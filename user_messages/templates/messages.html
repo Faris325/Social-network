@@ -57,33 +57,51 @@
     wsScheme + "://" + window.location.host + `/ws/chat/${otherUserId}/` // открытие веб-сокет соединения
   );
 
-  chatSocket.onmessage = function(e) { // сервер присылает всем участникам комнаты это сообщение 
-    const data = JSON.parse(e.data); // json-строка, которую прислал сервер, преобразование ее в json-объект 
-    const message = data.message; // Создание переменной с сообщением текста, который отправил пользователь
-    const media = data.media_file; // C переменной с сообщением файла, который отпарвил пользователь 
-    const senderId = data.sender_id; // id пользователя, который отправил сообщение 
+  chatSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
 
-    const chatLog = document.getElementById("chatMessages"); // находит элемент на странице с id = "chatMessages" и сохраняет в переменную(div контейнер в include)
+    const message = data.message;
+    const media = data.media_file;
+    const senderId = data.sender_id;
 
-    const msgElement = document.createElement("div"); // Создаёт элемент div и сохраняет его в переменную
-    msgElement.classList.add("message-item"); // к элементу div добавляется класс message-item 
-    if (senderId === currentUserId) {   // Если sender id совпадает с currentId (то есть сообщение отправил текущий пользователь), то к элементу добавляется класс sent
-      msgElement.classList.add("sent"); 
-    } else {
-      msgElement.classList.add("received"); // Если это сообщение от другого пользователя, добавляется класс "received"
+    const chatLog = document.getElementById("chatMessages");
+
+    const msgElement = document.createElement("div");
+    msgElement.classList.add("message-item");
+
+    msgElement.classList.add(
+      senderId === currentUserId ? "sent" : "received"
+    );
+
+    const content = document.createElement("div");
+    content.classList.add("message-content");
+
+    // Текст сообщения 
+    if (message) {
+      const p = document.createElement("p");
+      p.textContent = message;
+      content.appendChild(p);
     }
 
-    msgElement.innerHTML = `  
-      <div class="message-content">
-      <p>${message}</p>
-      ${media ? `<img src="${media}" alt="media content" class="message-media">` : ''}
-      <span class="timestamp">${new Date().toLocaleString()}</span>  
-      </div>`;  // Кладёт в новый блок div содержимое 
+    // Медиа
+    if (media) {
+      const img = document.createElement("img");
+      img.src = media;
+      img.alt = "media content";
+      img.classList.add("message-media");
+      content.appendChild(img);
+    }
 
-    chatLog.appendChild(msgElement); // добавляет внутрь chatLog новый элемент, который был создан выше
-    chatLog.scrollTop = chatLog.scrollHeight; // прокручивает список сообщений вниз
+    // Время
+    const time = document.createElement("span");
+    time.classList.add("timestamp");
+    time.textContent = new Date().toLocaleString();
+    content.appendChild(time);
 
-    document.querySelector('.no-messages').remove()
+    msgElement.appendChild(content);
+    chatLog.appendChild(msgElement);
+
+    chatLog.scrollTop = chatLog.scrollHeight;
   };
 
   document.getElementById("chat-message-form").onsubmit = function(e) {   // Код срабатывает в момент отправки формы 
