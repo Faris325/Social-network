@@ -146,7 +146,7 @@ http://127.0.0.1:80
 
 > Замените изображения на реальные при необходимости
 
-![Авторизация](screenshots/authorization.png)
+![Главная лента](screenshots/authorization.png)
 
 ![Главная лента](screenshots/publications.png)
 
