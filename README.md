@@ -146,8 +146,6 @@ http://127.0.0.1:80
 
 ## 📷 Скриншоты
 
-![Авторизация](screenshots/authorization.png)
-
 ![Главная лента](screenshots/publications.png)
 
 ![Профиль](screenshots/profile.png)
